@@ -9,8 +9,13 @@ Load.prototype = {
 	game.load.spritesheet('enemy','baddie.png',32,32);
 	game.load.spritesheet('dude', 'dude.png',32,48);
 	},
-	create: function() {
-		
+    create: function() {
+	//fix the size
+	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    
+        //have the game centered horizontally
+        this.scale.pageAlignHorizontally = true;
+        this.scale.pageAlignVertically = true;
         game.state.start('Play');
-	}
+    }
 };
