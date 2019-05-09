@@ -11,8 +11,7 @@ Play.prototype = {
 
 		this.map.setCollisionByExclusion([]);
 
-        this.lava = this.map.createLayer('lava');
-        this.floor = this.map.createLayer('floors');
+        this.floor = this.map.createLayer('Tile Layer 1');
 
         this.floor.resizeWorld();
         
