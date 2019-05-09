@@ -31,14 +31,19 @@ Player.prototype.update  = function() {
     if(this.isGrounded) {
         this.jumps = 2;
         this.jumping = false;
+        this.inAir = false
     } else {
-        this.jumps = 1;
-        this.jumping = true;
+        if(!this.inAir) {
+            this.jumps--;
+            this.inAir = true;
+        }
     }
     // allow steady velocity change up to a certain key down duration
     if(this.jumps > 0 && game.input.keyboard.downDuration(Phaser.Keyboard.UP, 150)) {
         this.body.velocity.y = -700
         this.jumping = true;
+        this.inAir = true;
+
     } 
 
     if(this.jumps === 1 && game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
@@ -53,8 +58,10 @@ Player.prototype.update  = function() {
 
     // finally, letting go of the UP key subtracts a jump
     if(this.jumping && game.input.keyboard.upDuration(Phaser.Keyboard.UP)) {
-        //this.jumps--;
+        this.jumps--;
         this.jumping = false;
+        console.log(this.jumps);
+
     }
 }
 
