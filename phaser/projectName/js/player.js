@@ -35,7 +35,7 @@ Player.prototype.update  = function() {
     } 
 
     if(this.jumps === 1 && game.input.keyboard.downDuration(Phaser.Keyboard.SPACEBAR,150)) {
-        this.body.velocity.x = this.scale.x * 700;
+        this.body.velocity.x = this.scale.x * 800;
         this.jumping = true;
     }
 
