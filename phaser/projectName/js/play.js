@@ -6,12 +6,16 @@ Play.prototype = {
         game.physics.arcade.TILE_BIAS = 32;
 
         this.map = game.add.tilemap('level');
+        this.map2 = game.add.tilemap('level2');
         this.map.addTilesetImage('map1', 'floor');
         this.map.addTilesetImage('map2', 'lava');
+        this.map2.addTilesetImage('map1', 'floor');
+        this.map2.addTilesetImage('map2', 'lava');
 
 		this.map.setCollisionByExclusion([]);
+        this.map2.setCollisionByExclusion([]);
 
-        this.heatFloor = this.map.createLayer('heat');
+        this.heatFloor = this.map2.createLayer('heat');
         this.floor = this.map.createLayer('floor');
         this.lava = this.map.createLayer('lava');
 
