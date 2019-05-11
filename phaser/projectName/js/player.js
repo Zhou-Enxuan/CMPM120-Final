@@ -18,12 +18,14 @@ Player.prototype.update  = function() {
         this.body.velocity.x = 0;
         this.body.gravity.y = 2800;
     }
-    if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-        this.body.velocity.x = 300;
-        this.scale.x = 1;
-    } else if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-        this.body.velocity.x = -300;
-        this.scale.x = -1;
+    if(!this.dash) {
+        if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+            this.body.velocity.x = 300;
+            this.scale.x = 1;
+        } else if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+            this.body.velocity.x = -300;
+            this.scale.x = -1;
+        }
     }
 
     this.isGrounded = this.body.blocked.down;

@@ -5,6 +5,8 @@ Play.prototype = {
 
         game.physics.arcade.TILE_BIAS = 32;
 
+        game.add.sprite(0,0,'BG');
+
         this.map = game.add.tilemap('level');
         this.map2 = game.add.tilemap('level-2');
         this.map3 = game.add.tilemap('level-3');
