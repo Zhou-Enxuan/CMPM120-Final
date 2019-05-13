@@ -13,7 +13,7 @@ function Player(game, x, y , key, frame) {
 Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
-Player.prototype.update  = function() {
+Player.prototype.update = function() {
     if(!this.dash ) {
         this.body.velocity.x = 0;
         this.body.gravity.y = 2800;
@@ -27,7 +27,6 @@ Player.prototype.update  = function() {
             this.scale.x = -1;
         }
     }
-
     this.isGrounded = this.body.blocked.down;
 
     if(this.isGrounded) {
@@ -35,20 +34,20 @@ Player.prototype.update  = function() {
         this.jumping = false;
         this.inAir = false
     } else {
-        if(!this.inAir) {
-            this.jumps--;
+        if(!this.inAir)  {
+            this.jumps = 1;
             this.inAir = true;
         }
     }
     // allow steady velocity change up to a certain key down duration
+    
     if(this.jumps > 0 && game.input.keyboard.downDuration(Phaser.Keyboard.UP, 150)) {
         this.body.velocity.y = -700
         this.jumping = true;
         this.inAir = true;
-
     } 
 
-    if(this.jumps === 1 && game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
+    if(!this.jumping && this.jumps === 1 && game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
         this.body.gravity.y = 0;
         this.body.velocity.y = 0;
         this.body.velocity.x = this.scale.x * 800;
@@ -62,11 +61,9 @@ Player.prototype.update  = function() {
     if(this.jumping && game.input.keyboard.upDuration(Phaser.Keyboard.UP)) {
         this.jumps--;
         this.jumping = false;
-        console.log(this.jumps);
-
     }
-}
 
+}
 Player.prototype.stopDash = function() {
     this.body.velocity.x = 0;
     this.dash = false;

@@ -6,6 +6,7 @@ Load.prototype = {
 	game.load.tilemap('level-2', 'Vol1_danger.json', null, Phaser.Tilemap.TILED_JSON);
 	game.load.tilemap('level-3', 'Vol1_lava.json', null, Phaser.Tilemap.TILED_JSON);
 	game.load.images(['BG'],['volcano_theme.png']);
+	game.load.atlas('UI','UI.png','UI.json');
         game.load.spritesheet('assets', 'sucai.png', 32, 32);
 	game.load.spritesheet('lava', 'danger.png', 32, 32);
 	game.load.spritesheet('enemy','baddie.png',32,32);
