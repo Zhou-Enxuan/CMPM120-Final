@@ -24,6 +24,15 @@ Play.prototype = {
 
         this.floor.resizeWorld();
 
+        this.hot = game.add.sprite(0, 0, 'hot');
+        this.hot.alpha = 0;
+        this.hot.fixedToCamera = true;
+        this.cold = game.add.sprite(0, 0, 'cold');
+        this.cold.alpha = 0;
+        this.cold.fixedToCamera = true;
+
+        this.touchHeat = false;
+
         UI = new myUI(game);
         player = new Player(game,0,0,'dude',4);
         game.add.existing(player);
@@ -44,7 +53,6 @@ Play.prototype = {
     },
 
     update: function() {
-
         if(game.camera.deadzone !== null) {
 			this.zone.x = this.zx + game.camera.x;
 			this.zone.y = this.zy + game.camera.y;
@@ -54,8 +62,13 @@ Play.prototype = {
             this.debug = !this.debug;
             console.log(this.debug);
         }
+
+        if(this.hot.alpha > 0 && !this.touchHeat) {
+            this.hot.alpha -=0.001;
+            console.log('work');
+        }
         
-        game.physics.arcade.collide(player, this.heatFloor, this.touchLava, null, this);
+        this.touchHeat = game.physics.arcade.collide(player, this.heatFloor, this.touchLava, null, this);
         game.physics.arcade.collide(player, this.floor);
 
         //console.log(UI.pointerPos);
@@ -63,7 +76,9 @@ Play.prototype = {
     },
 
     touchLava: function(player, lava) {
-        player.kill();
+        if (this.hot.alpha < 1) {
+            this.hot.alpha += 0.001;
+        }
         console.log('touched lava');
 
     }, 
