@@ -5,6 +5,7 @@
 //Fire_heating resouse are use from SoundJay.com
 var Load = function(game) {};
 Load.prototype = {
+	// load the assets
 	preload: function() {
         	game.load.path = './assets/img/';
 		game.load.tilemap('level', 'Vol1_floor.json', null, Phaser.Tilemap.TILED_JSON);
@@ -26,7 +27,8 @@ Load.prototype = {
     
         //have the game centered horizontally
         this.scale.pageAlignHorizontally = true;
-        this.scale.pageAlignVertically = true;
+	this.scale.pageAlignVertically = true;
+	//start the playing stage
         game.state.start('Play');
     }
 };
