@@ -19,15 +19,15 @@ function myUI(game) {
 myUI.prototype = Object.create(Phaser.Sprite.prototype);
 myUI.prototype.constructor = myUI;
 
-myUI.prototype.update = function() {
-        this.pointerPos = 400 + this.temp;
-        while(this.pointer.x > this.pointerPos) {
-            this.pointer.x--;
-        }
+// myUI.prototype.update = function() {
+//         this.pointerPos = 400 + this.temp;
+//         while(this.pointer.x > this.pointerPos) {
+//             this.pointer.x--;
+//         }
 
-        while(this.pointer.x < this.pointerPos) {
-            this.pointer.x++;
-        }
+//         while(this.pointer.x < this.pointerPos) {
+//             this.pointer.x++;
+//         }
 
-        console.log('UI is: ' + this.pointerPos);
-    }
+//         console.log('UI is: ' + this.pointerPos);
+// }

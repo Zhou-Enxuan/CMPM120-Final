@@ -5,7 +5,7 @@ Play.prototype = {
 
         game.physics.arcade.TILE_BIAS = 32;
 
-        game.add.tileSprite(0, 0, 2432, 928, 'BG');
+        game.add.tileSprite(0, 320, 2432, 928, 'BG');
 
         this.map = game.add.tilemap('level');
         this.map2 = game.add.tilemap('level-2');
@@ -24,6 +24,11 @@ Play.prototype = {
 
         this.floor.resizeWorld();
 
+        this.BGM = game.add.audio('BGM');
+        this.BGM.play('', 0, 0.5, true);
+
+        this.heatSound = game.add.audio('heat');
+
         this.hot = game.add.sprite(0, 0, 'hot');
         this.hot.alpha = 0;
         this.hot.fixedToCamera = true;
@@ -34,7 +39,7 @@ Play.prototype = {
         this.touchHeat = false;
 
         UI = new myUI(game);
-        player = new Player(game,0,0,'dude',4);
+        player = new Player(game,0,385,'UI','robot_0001');
         game.add.existing(player);
         this.camera = game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT, 0.75, 0.75);
 
@@ -45,14 +50,16 @@ Play.prototype = {
 			this.zone = new Phaser.Rectangle(this.zx, this.zy, game.camera.deadzone.width, game.camera.deadzone.height);
 		}
 
-        console.log(this.zx);
         UI.temp = 200;
         this.debug = false;
         //console.log(UI.pointerPos);
+        UI.pointerPos = 400 + UI.temp;
+        UI.pointer.x += 300;
 
     },
 
     update: function() {
+        //console.log(UI.pointer.x);
         if(game.camera.deadzone !== null) {
 			this.zone.x = this.zx + game.camera.x;
 			this.zone.y = this.zy + game.camera.y;
@@ -64,10 +71,27 @@ Play.prototype = {
         }
 
         if(this.hot.alpha > 0 && !this.touchHeat) {
-            this.hot.alpha -=0.001;
+            this.hot.alpha -=0.01;
             console.log('work');
         }
-        
+
+        if(!this.touchHeat) {
+            this.heatSound.stop();
+        }
+
+        // if(UI.pointer.x > UI.pointerPos) {
+        //     UI.pointer.x--;
+        //     console.log('UI--: ' + UI.pointer.x);
+        // }
+
+        // if(UI.pointer.x < UI.pointerPos) {
+        //     UI.pointer.x += 100;
+        //     console.log('UI++: ' + UI.pointer.x);
+        // }
+
+        //console.log('UIx is: ' + UI.pointer.x);
+        //console.log('UI is: ' + UI.pointerPos);
+
         this.touchHeat = game.physics.arcade.collide(player, this.heatFloor, this.touchLava, null, this);
         game.physics.arcade.collide(player, this.floor);
 
@@ -77,7 +101,10 @@ Play.prototype = {
 
     touchLava: function(player, lava) {
         if (this.hot.alpha < 1) {
-            this.hot.alpha += 0.001;
+            this.hot.alpha += 0.01;
+        }
+        if(!this.heatSound.isPlaying) {
+            this.heatSound.play('', 0, 0.5, true);
         }
         console.log('touched lava');
 
