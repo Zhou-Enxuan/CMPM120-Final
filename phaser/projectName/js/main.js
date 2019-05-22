@@ -1,6 +1,7 @@
 //add global variable
 var player;
 var UI;
+var moveup
 
 //load window
 window.onload = function() {

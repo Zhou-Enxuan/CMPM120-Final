@@ -29,6 +29,18 @@ Play.prototype = {
         this.floor = this.map.createLayer('floor');
         this.lava = this.map3.createLayer('lava');
 
+        this.blocks = game.add.group();
+        this.blocks.enableBody = true;
+        this.map.createFromObjects('move', 7, 'assets', 6, true, true, this.blocks);
+        this.map.createFromObjects('move', 5, 'assets', 4, true, true, this.blocks);
+        this.map.createFromObjects('move', 4, 'assets', 3, true, true, this.blocks);
+        this.map.createFromObjects('move2', 6, 'assets', 5, true, true, this.blocks);
+
+
+        this.blocks.setAll('body.velocity.y',-100);
+        this.blocks.setAll('body.immovable',true);
+
+        
         //resize the world to tilemap size
         this.floor.resizeWorld();
 
@@ -67,11 +79,16 @@ Play.prototype = {
 
 
         //change the temp in the current level
-        UI.temp = 200;
+        //63 to first line
+        //240 to the highest
         this.debug = false;
+
+        this.moveup =true;
         //console.log(UI.pointerPos);
-        UI.pointerPos = 400 + UI.temp;
-        UI.pointer.x += 300;
+        this.tempGrow = game.time.events.loop(Phaser.Timer.SECOND * 1, function() {
+            UI.temp++;
+            UI.tempChanged = true;
+        }, this);
 
     },
 
@@ -86,13 +103,39 @@ Play.prototype = {
         //key for debug showing
         if(this.input.keyboard.justPressed(Phaser.Keyboard.T)){
             this.debug = !this.debug;
-            console.log(this.debug);
+            //console.log(this.debug);
         }
 
+        if(UI.tempChanged) {
+            UI.pointerPos = 400 + UI.temp;
+            UI.tempChanged = false;
+        }
+        if(UI.pointer.cameraOffset.x > 400) {
+            if(UI.temp > 240) {
+                this.hot.alpha = 1;
+            } else {
+                this.hot.alpha = (UI.pointer.cameraOffset.x - 400)/240;
+            }
+        }
+        else if(UI.pointer.cameraOffset.x < 400) {
+            if(UI.temp > 240) {
+                this.cold.alpha = 1;
+            } else {
+                this.cold.alpha = (400 - UI.pointer.cameraOffset.x)/240;
+            }
+        }
+
+        if((this.blocks.getChildAt(1).y < 400 && this.moveup) || (this.blocks.getChildAt(1).y > 700 && !this.moveup)) {
+            this.blocks.setAll('body.velocity.y', this.blocks.getChildAt(1).body.velocity.y * -1);
+            this.moveup = !this.moveup;
+            console.log(this.blocks.getChildAt(1).y);
+        }
+
+        //console.log('TEMP:' + UI.temp);
+
         //check if the hot screen should turn on
-        if(this.hot.alpha > 0 && !this.touchHeat) {
-            this.hot.alpha -=0.01;
-            console.log('work');
+        if(!this.touchHeat) {
+            this.tempGrow.delay = Phaser.Timer.SECOND * 1;
         }
 
         //stop sound effect if player is not on heat floor
@@ -100,15 +143,7 @@ Play.prototype = {
             this.heatSound.stop();
         }
 
-        // if(UI.pointer.x > UI.pointerPos) {
-        //     UI.pointer.x--;
-        //     console.log('UI--: ' + UI.pointer.x);
-        // }
-
-        // if(UI.pointer.x < UI.pointerPos) {
-        //     UI.pointer.x += 100;
-        //     console.log('UI++: ' + UI.pointer.x);
-        // }
+        UI.updateUI();
 
         //console.log('UIx is: ' + UI.pointer.x);
         //console.log('UI is: ' + UI.pointerPos);
@@ -118,6 +153,10 @@ Play.prototype = {
         //make player collide with normal floor
         game.physics.arcade.collide(player, this.floor);
 
+        game.physics.arcade.collide(player, this.lava);
+
+        game.physics.arcade.collide(player, this.blocks);
+
         //console.log(UI.pointerPos);
 
     },
@@ -125,14 +164,15 @@ Play.prototype = {
     //function that when player is landing on heat floor
     touchLava: function(player, lava) {
         //make the hot screen start showing up
-        if (this.hot.alpha < 1) {
-            this.hot.alpha += 0.01;
-        }
+        this.tempGrow.delay = Phaser.Timer.SECOND * 0.05;
+        // if (this.hot.alpha < 1) {
+        //     this.hot.alpha += 0.01;
+        // }
         //playing the heat sound, don't make play again if it is already playing
         if(!this.heatSound.isPlaying) {
             this.heatSound.play('', 0, 0.5, true);
         }
-        console.log('touched lava');
+        //console.log('touched lava');
 
     }, 
     //showing the debug info
@@ -143,6 +183,7 @@ Play.prototype = {
             if(game.camera.deadzone !== null) {
 			    game.debug.geom(this.zone, 'rgba(255,0,0,0.25');
             }
+            game.debug.body(player);
         }
 
     }

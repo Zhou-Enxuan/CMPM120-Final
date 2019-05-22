@@ -12,6 +12,7 @@ function Player(game, x, y , key, frame) {
     this.dash = false;
     //add jump sound effect
     this.jumpSound = game.add.audio('jump');
+    this.body.setSize(35,53,13,5);
     //add walk animation
     this.animations.add('walk', Phaser.Animation.generateFrameNames('robot_', 1, 11, '', 4), 30, true);
 }
@@ -43,7 +44,7 @@ Player.prototype.update = function() {
     }
 
     //check if player is on ground
-    this.isGrounded = this.body.blocked.down;
+    this.isGrounded = this.body.blocked.down || this.body.touching.down;
 
     //if it is, set the jump move beck to default, if not , make sure player can only do one more jump or dash
     if(this.isGrounded) {
@@ -65,6 +66,9 @@ Player.prototype.update = function() {
         this.jumpSound.play();
     } 
 
+    console.log(this.isGrounded);
+    console.log(this.jumps);
+
     //implement air dash move, can only dash once after one jump, can't dash if player did doble jump
     if(!this.jumping && this.jumps === 1 && game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
         this.body.gravity.y = 0;
@@ -80,6 +84,13 @@ Player.prototype.update = function() {
     if(this.jumping && game.input.keyboard.upDuration(Phaser.Keyboard.UP)) {
         this.jumps--;
         this.jumping = false;
+    }
+
+    if(UI.energyValue > 0.3 && game.input.keyboard.justPressed(Phaser.Keyboard.Q)) {
+        UI.energyValue -= 0.3;
+        UI.temp -= 100;
+        UI.tempChanged = true;
+        console.log('work');
     }
 
 }
