@@ -66,9 +66,6 @@ Player.prototype.update = function() {
         this.jumpSound.play();
     } 
 
-    console.log(this.isGrounded);
-    console.log(this.jumps);
-
     //implement air dash move, can only dash once after one jump, can't dash if player did doble jump
     if(!this.jumping && this.jumps === 1 && game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
         this.body.gravity.y = 0;

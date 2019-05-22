@@ -1,7 +1,7 @@
 //add global variable
 var player;
 var UI;
-var moveup
+var mapObjects;
 
 //load window
 window.onload = function() {

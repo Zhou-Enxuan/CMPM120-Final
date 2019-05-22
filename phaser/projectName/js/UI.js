@@ -1,5 +1,11 @@
 //creating game UI
 function myUI(game) {
+    this.hot = game.add.sprite(0, 0, 'hot');
+    this.hot.alpha = 0;
+    this.hot.fixedToCamera = true;
+    this.cold = game.add.sprite(0, 0, 'cold');
+    this.cold.alpha = 0;
+    this.cold.fixedToCamera = true;
     //add the tempture bar
     this.tempbar = game.add.sprite(400, 30, 'UI', 'temp_bar');
     this.tempbar.anchor.set(0.5);
@@ -47,10 +53,30 @@ myUI.prototype = {
             //console.log('UI++: ' + UI.pointer.x);
         }
 
-        if(UI.temp > 240) {
-            UI.temp = 240;
-        } else if(UI.temp < -240) {
-            UI.temp = -240;
+        if(this.temp > 240) {
+            this.temp = 240;
+        } else if(this.temp < -240) {
+            this.temp = -240;
+        }
+
+        if(this.tempChanged) {
+            this.pointerPos = 400 + this.temp;
+            this.tempChanged = false;
+        }
+
+        if(this.pointer.cameraOffset.x > 400) {
+            if(this.temp > 240) {
+                this.hot.alpha = 1;
+            } else {
+                this.hot.alpha = (this.pointer.cameraOffset.x - 400)/240;
+            }
+        }
+        else if(this.pointer.cameraOffset.x < 400) {
+            if(this.temp > 240) {
+                this.cold.alpha = 1;
+            } else {
+                this.cold.alpha = (400 - this.pointer.cameraOffset.x)/240;
+            }
         }
 
         this.lifePercent(this.lifeValue);

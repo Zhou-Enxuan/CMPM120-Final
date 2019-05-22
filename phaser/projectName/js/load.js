@@ -13,9 +13,8 @@ Load.prototype = {
 		game.load.tilemap('level-3', 'Vol1_lava.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.images(['BG', 'hot', 'cold'],['volcano_theme.png','Hot.png','Cold.png']);
 		game.load.atlas('UI','UI.png','UI.json');
-        game.load.spritesheet('assets', 'sucai.png', 32, 32);
-		game.load.spritesheet('lava', 'danger.png', 32, 32);
-		game.load.spritesheet('enemy','baddie.png',32,32);
+        game.load.spritesheet('assets', 'assets.png', 32, 32);
+		game.load.spritesheet('objects', 'object.png', 32, 32);
 		game.load.path = './assets/audio/';
 		game.load.audio('jump',['jump.mp3']);
 		game.load.audio('BGM',['vol_BGM.mp3']);

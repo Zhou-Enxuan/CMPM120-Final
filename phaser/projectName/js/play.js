@@ -8,39 +8,27 @@ Play.prototype = {
         game.physics.arcade.TILE_BIAS = 32;
 
         //add the background and make it a tile sprite
-        game.add.tileSprite(0, 320, 2432, 928, 'BG');
+        game.add.tileSprite(0, 320, 4800, 1600, 'BG');
 
         //add the tile map, there is three tile map so palyer 
         //can collide with different layer with different affect
         this.map = game.add.tilemap('level');
         this.map2 = game.add.tilemap('level-2');
         this.map3 = game.add.tilemap('level-3');
-        this.map.addTilesetImage('sucai', 'assets');
-        this.map2.addTilesetImage('sucai', 'assets');
-        this.map3.addTilesetImage('sucai', 'assets');
+        this.map.addTilesetImage('test2', 'assets');
+        this.map2.addTilesetImage('test2', 'assets');
+        this.map3.addTilesetImage('test2', 'assets');
 
         //making the blank part not collidable
 		this.map.setCollisionByExclusion([]);
         this.map2.setCollisionByExclusion([]);
         this.map3.setCollisionByExclusion([]);
 
+        mapObjects = new myObjects(game, this.map);
+
         //creating layer in tilemaps
         this.heatFloor = this.map2.createLayer('danger');
-        this.floor = this.map.createLayer('floor');
-        this.lava = this.map3.createLayer('lava');
-
-        this.blocks = game.add.group();
-        this.blocks.enableBody = true;
-        this.map.createFromObjects('move', 7, 'assets', 6, true, true, this.blocks);
-        this.map.createFromObjects('move', 5, 'assets', 4, true, true, this.blocks);
-        this.map.createFromObjects('move', 4, 'assets', 3, true, true, this.blocks);
-        this.map.createFromObjects('move2', 6, 'assets', 5, true, true, this.blocks);
-
-
-        this.blocks.setAll('body.velocity.y',-100);
-        this.blocks.setAll('body.immovable',true);
-
-        
+        this.floor = this.map.createLayer('new_floor');
         //resize the world to tilemap size
         this.floor.resizeWorld();
 
@@ -52,20 +40,32 @@ Play.prototype = {
         this.heatSound = game.add.audio('heat');
 
         //add sprite of the effect that screen turn red or blue depend on temp
-        this.hot = game.add.sprite(0, 0, 'hot');
-        this.hot.alpha = 0;
-        this.hot.fixedToCamera = true;
-        this.cold = game.add.sprite(0, 0, 'cold');
-        this.cold.alpha = 0;
-        this.cold.fixedToCamera = true;
 
         //a boolean check if the player touching the heating floor
         this.touchHeat = false;
 
         //creating the UI
-        UI = new myUI(game);
-        player = new Player(game,0,385,'UI','robot_0001');
+        player = new Player(game,60,385,'UI','robot_0001');
         game.add.existing(player);
+
+        this.lava = game.add.group();
+        this.lava.enableBody = true;
+        this.map3.createFromObjects('lava', 7, 'assets', 6, true, true, this.lava);
+        this.map3.createFromObjects('lava', 8, 'assets', 7, true, true, this.lava);
+
+        this.lava.callAll('animations.add', 'animations', 'lava1', [6,7], 10, true);
+        this.lava.callAll('animations.add', 'animations', 'lava2', [7,6], 10, true);
+
+        this.lava.forEach(function(item){
+            if(item.frame === 6) {
+                item.animations.play('lava1');
+            } else if (item.frame === 7) {
+                item.animations.play('lava2');
+            }
+        });
+
+        UI = new myUI(game);
+
         //adding the camera that follows the player, use example of Nathon's code
         this.camera = game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT, 0.75, 0.75);
 
@@ -85,10 +85,13 @@ Play.prototype = {
 
         this.moveup =true;
         //console.log(UI.pointerPos);
-        this.tempGrow = game.time.events.loop(Phaser.Timer.SECOND * 1, function() {
+        this.tempGrow = game.time.events.loop(Phaser.Timer.SECOND * 0.5, function() {
             UI.temp++;
             UI.tempChanged = true;
         }, this);
+
+        this.zflag = true;
+
 
     },
 
@@ -105,32 +108,6 @@ Play.prototype = {
             this.debug = !this.debug;
             //console.log(this.debug);
         }
-
-        if(UI.tempChanged) {
-            UI.pointerPos = 400 + UI.temp;
-            UI.tempChanged = false;
-        }
-        if(UI.pointer.cameraOffset.x > 400) {
-            if(UI.temp > 240) {
-                this.hot.alpha = 1;
-            } else {
-                this.hot.alpha = (UI.pointer.cameraOffset.x - 400)/240;
-            }
-        }
-        else if(UI.pointer.cameraOffset.x < 400) {
-            if(UI.temp > 240) {
-                this.cold.alpha = 1;
-            } else {
-                this.cold.alpha = (400 - UI.pointer.cameraOffset.x)/240;
-            }
-        }
-
-        if((this.blocks.getChildAt(1).y < 400 && this.moveup) || (this.blocks.getChildAt(1).y > 700 && !this.moveup)) {
-            this.blocks.setAll('body.velocity.y', this.blocks.getChildAt(1).body.velocity.y * -1);
-            this.moveup = !this.moveup;
-            console.log(this.blocks.getChildAt(1).y);
-        }
-
         //console.log('TEMP:' + UI.temp);
 
         //check if the hot screen should turn on
@@ -144,6 +121,7 @@ Play.prototype = {
         }
 
         UI.updateUI();
+        mapObjects.objectAllUpdate();
 
         //console.log('UIx is: ' + UI.pointer.x);
         //console.log('UI is: ' + UI.pointerPos);
@@ -153,9 +131,14 @@ Play.prototype = {
         //make player collide with normal floor
         game.physics.arcade.collide(player, this.floor);
 
-        game.physics.arcade.collide(player, this.lava);
+        this.isHitLava = game.physics.arcade.overlap(player, this.lava, this.hitLava, null, this);
 
-        game.physics.arcade.collide(player, this.blocks);
+        if(!this.isHitLava) {
+            if(!this.zflag) {
+                game.world.moveDown(this.floor);
+            }
+            this.zflag = true;
+        }
 
         //console.log(UI.pointerPos);
 
@@ -175,6 +158,17 @@ Play.prototype = {
         //console.log('touched lava');
 
     }, 
+
+    hitLava: function(player, lava) {
+        this.tempGrow.delay = Phaser.Timer.SECOND * 0.001;
+        if(this.zflag) {
+            game.world.moveUp(this.floor);
+        }
+        this.zflag = false;
+        if(!this.heatSound.isPlaying) {
+            this.heatSound.play('', 0, 0.5, true);
+        }
+    },
     //showing the debug info
     render: function() {
         if(this.debug) {
