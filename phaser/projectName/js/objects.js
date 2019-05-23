@@ -1,8 +1,10 @@
 function myObjects(game, myTilemap) {
+    //objects for helper blocks
     this.helper = game.add.group();
     this.helper.enableBody = true;
     myTilemap.createFromObjects('helper', 1, 'assets', 1, true, true, this.helper);
     this.helper.setAll('alpha', 0);
+    //objects for up down moving blocks
     this.blocks = [];
     this.blocks.push(game.add.group());
     this.blocks[0].enableBody = true;
@@ -44,12 +46,19 @@ function myObjects(game, myTilemap) {
     myTilemap.createFromObjects('moving block 5', 3, 'assets', 2, true, true, this.blocks[5]);
     this.blocks[5].setAll('body.velocity.y', 100)
     this.blocks[5].setAll('body.immovable', true);
+    //objects for protals
+    this.portal = game.add.group();
+    this.portal.enableBody = true;
+    myTilemap.createFromObjects('portal level enter', 19, 'objects', 3, true, true, this.portal);
+    myTilemap.createFromObjects('portal level recieve', 18, 'objects', 2, true, true, this.portal);
+    
 }
 
 myObjects.prototype = {
     objectAllUpdate: function() {
         this.blockUpdate();
-        console.log(player.y);
+        this.portalUpdate();
+        //console.log(player.y);
     },
     blockUpdate: function() {
         for(var i = 0; i < this.blocks.length; i++) {
@@ -59,5 +68,17 @@ myObjects.prototype = {
     },
     blocksHelper: function(block, helper) {
         block.body.velocity.y *= -1;
+    },
+    portalUpdate: function() {
+        this.portalFalg = game.physics.arcade.overlap(player, this.portal, this.portalHelper, null, this);
+    },
+    portalHelper: function(player, portal) {
+        console.log(this.portalFlag);
+        console.log(this.portalFlag2);
+        //console.log(this.portal.getIndex(portal));
+        if(this.portal.getIndex(portal) === 0) {
+            player.x = this.portal.getChildAt(1).x
+            player.y = this.portal.getChildAt(1).y
+        }
     }
 }

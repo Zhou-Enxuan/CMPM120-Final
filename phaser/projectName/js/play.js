@@ -112,7 +112,7 @@ Play.prototype = {
 
         //check if the hot screen should turn on
         if(!this.touchHeat) {
-            this.tempGrow.delay = Phaser.Timer.SECOND * 1;
+            this.tempGrow.delay = Phaser.Timer.SECOND * 0.5;
         }
 
         //stop sound effect if player is not on heat floor
@@ -160,7 +160,8 @@ Play.prototype = {
     }, 
 
     hitLava: function(player, lava) {
-        this.tempGrow.delay = Phaser.Timer.SECOND * 0.001;
+        UI.temp = 240;
+        UI.tempChanged = true;
         if(this.zflag) {
             game.world.moveUp(this.floor);
         }
@@ -178,6 +179,8 @@ Play.prototype = {
 			    game.debug.geom(this.zone, 'rgba(255,0,0,0.25');
             }
             game.debug.body(player);
+            game.debug.body(mapObjects.portal.getChildAt(0));
+            game.debug.body(mapObjects.portal.getChildAt(1));
         }
 
     }
