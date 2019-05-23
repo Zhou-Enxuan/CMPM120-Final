@@ -87,7 +87,6 @@ Player.prototype.update = function() {
         UI.energyValue -= 0.3;
         UI.temp -= 100;
         UI.tempChanged = true;
-        console.log('work');
     }
 
 }

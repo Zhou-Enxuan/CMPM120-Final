@@ -53,6 +53,11 @@ function myObjects(game, myTilemap) {
     this.portalFalg2 = false;
     myTilemap.createFromObjects('portal level enter', 19, 'objects', 3, true, true, this.portal);
     myTilemap.createFromObjects('portal level recieve', 18, 'objects', 2, true, true, this.portal);
+    myTilemap.createFromObjects('portal enter', 19, 'objects', 3, true, true, this.portal);
+    myTilemap.createFromObjects('portal recieve', 19, 'objects', 3, true, true, this.portal);
+    myTilemap.createFromObjects('portal_energy_in', 18, 'objects', 2, true, true, this.portal);
+    myTilemap.createFromObjects('portal_energy_out', 19, 'objects', 3, true, true, this.portal);
+
     
 }
 
@@ -89,6 +94,18 @@ myObjects.prototype = {
             } else if(this.portal.getIndex(portal) === 1) {
                 player.x = this.portal.getChildAt(0).x
                 player.y = this.portal.getChildAt(0).y
+            } else if(this.portal.getIndex(portal) === 2) {
+                player.x = this.portal.getChildAt(3).x
+                player.y = this.portal.getChildAt(3).y
+            } else if(this.portal.getIndex(portal) === 3) {
+                player.x = this.portal.getChildAt(2).x
+                player.y = this.portal.getChildAt(2).y
+            } else if(this.portal.getIndex(portal) === 4) {
+                player.x = this.portal.getChildAt(5).x
+                player.y = this.portal.getChildAt(5).y
+            } else if(this.portal.getIndex(portal) === 5) {
+                player.x = this.portal.getChildAt(4).x
+                player.y = this.portal.getChildAt(4).y
             }
         }
     }

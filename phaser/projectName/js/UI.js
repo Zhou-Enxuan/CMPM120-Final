@@ -36,6 +36,11 @@ function myUI(game) {
     //where the pointer should be depend on temp
     this.pointerPos = 400;
     this.tempChanged = false;
+    this.heatDamage = game.time.create(false);
+    this.heatDamage.loop(Phaser.Timer.SECOND * 3,function(){
+        this.lifeValue -= 0.1;
+    },this);
+    this.heatDamage.start();
 }
 
 //myUI.prototype = Object.create(Phaser.Sprite.prototype);
@@ -44,12 +49,14 @@ function myUI(game) {
 myUI.prototype = {
     updateUI: function() {
         if(this.pointer.cameraOffset.x > this.pointerPos && this.pointer.cameraOffset.x > 160) {
-            this.pointer.cameraOffset.x--;
+            var speed = (this.pointer.cameraOffset.x - this.pointerPos)/10;
+            this.pointer.cameraOffset.x -= speed;
             //console.log('UI--: ' + UI.pointer.x);
         }
 
         if(this.pointer.cameraOffset.x < this.pointerPos && this.pointer.cameraOffset.x < 640) {
-            this.pointer.cameraOffset.x++;
+            var speed = (this.pointerPos - this.pointer.cameraOffset.x)/10;
+            this.pointer.cameraOffset.x += speed;
             //console.log('UI++: ' + UI.pointer.x);
         }
 
@@ -62,6 +69,12 @@ myUI.prototype = {
         if(this.tempChanged) {
             this.pointerPos = 400 + this.temp;
             this.tempChanged = false;
+        }
+
+        if(this.temp >= 240) {
+            this.heatDamage.resume();
+        } else {
+            this.heatDamage.pause();
         }
 
         if(this.pointer.cameraOffset.x > 400) {
