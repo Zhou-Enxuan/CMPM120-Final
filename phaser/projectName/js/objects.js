@@ -49,6 +49,8 @@ function myObjects(game, myTilemap) {
     //objects for protals
     this.portal = game.add.group();
     this.portal.enableBody = true;
+    this.portalFalg = false;
+    this.portalFalg2 = false;
     myTilemap.createFromObjects('portal level enter', 19, 'objects', 3, true, true, this.portal);
     myTilemap.createFromObjects('portal level recieve', 18, 'objects', 2, true, true, this.portal);
     
@@ -71,14 +73,23 @@ myObjects.prototype = {
     },
     portalUpdate: function() {
         this.portalFalg = game.physics.arcade.overlap(player, this.portal, this.portalHelper, null, this);
+        if(!this.portalFalg) {
+            this.portalFalg2 = false;
+        }
     },
     portalHelper: function(player, portal) {
         console.log(this.portalFlag);
         console.log(this.portalFlag2);
         //console.log(this.portal.getIndex(portal));
-        if(this.portal.getIndex(portal) === 0) {
-            player.x = this.portal.getChildAt(1).x
-            player.y = this.portal.getChildAt(1).y
+        if(!this.portalFalg2){
+            this.portalFalg2 = true;
+            if(this.portal.getIndex(portal) === 0) {
+                player.x = this.portal.getChildAt(1).x
+                player.y = this.portal.getChildAt(1).y
+            } else if(this.portal.getIndex(portal) === 1) {
+                player.x = this.portal.getChildAt(0).x
+                player.y = this.portal.getChildAt(0).y
+            }
         }
     }
 }

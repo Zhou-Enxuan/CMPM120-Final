@@ -8,7 +8,7 @@ Play.prototype = {
         game.physics.arcade.TILE_BIAS = 32;
 
         //add the background and make it a tile sprite
-        game.add.tileSprite(0, 320, 4800, 1600, 'BG');
+        game.add.tileSprite(0, 320, 4800, 2560, 'BG');
 
         //add the tile map, there is three tile map so palyer 
         //can collide with different layer with different affect
