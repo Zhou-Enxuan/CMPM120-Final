@@ -19,13 +19,13 @@ function myUI(game) {
     //add a heart to repersent life
     this.lifeScreen = game.add.sprite(5.5,2.5,'UI','lifeOut');
     this.lifeScreen.fixedToCamera = true;
-    this.life = game.add.sprite(39,161,'UI','LifeBar');
+    this.life = game.add.sprite(38.8,161,'UI','LifeBar');
     this.life.anchor.set(1);
     this.lifeValue = 1;
     this.life.fixedToCamera = true;
     this.energyScreen = game.add.sprite(45.5,2.5,'UI','coolEnergyOut');
     this.energyScreen.fixedToCamera = true;
-    this.energy = game.add.sprite(79,161,'UI','coolEnery');
+    this.energy = game.add.sprite(78.8,161,'UI','coolEnery');
     this.energy.anchor.set(1);
     this.energyValue = 1;
     this.energy.fixedToCamera = true;
@@ -37,7 +37,7 @@ function myUI(game) {
     this.pointerPos = 400;
     this.tempChanged = false;
     this.heatDamage = game.time.create(false);
-    this.heatDamage.loop(Phaser.Timer.SECOND * 3,function(){
+    this.heatDamage.loop(Phaser.Timer.SECOND * 2,function(){
         this.lifeValue -= 0.1;
     },this);
     this.heatDamage.start();
@@ -96,7 +96,7 @@ myUI.prototype = {
         this.energyPercent(this.energyValue);
     },
     lifePercent: function(percent) {
-        this.currentLife = 160 * percent;
+        this.currentLife = 155 * percent;
         if(this.life.height > this.currentLife) {
             this.life.height -= 2;
         }
@@ -108,7 +108,7 @@ myUI.prototype = {
         }
     },
     energyPercent: function(percent) {
-        this.currentEnergy = 160 * percent;
+        this.currentEnergy = 155 * percent;
         if(this.energy.height > this.currentEnergy) {
             this.energy.height -= 2;
         }

@@ -13,6 +13,12 @@ function Player(game, x, y , key, frame) {
     //add jump sound effect
     this.jumpSound = game.add.audio('jump');
     this.body.setSize(35,53,13,5);
+    this.super = false;
+    this.superTime = game.time.create(false);
+    this.superTime.loop(Phaser.Timer.SECOND * 2, function(){
+        this.super = false;
+    },this);
+    this.superTime.start();
     //add walk animation
     this.animations.add('walk', Phaser.Animation.generateFrameNames('robot_', 1, 11, '', 4), 30, true);
 }
@@ -87,6 +93,12 @@ Player.prototype.update = function() {
         UI.energyValue -= 0.3;
         UI.temp -= 100;
         UI.tempChanged = true;
+    }
+
+    if(this.super) {
+        this.superTime.resume();
+    } else {
+        this.superTime.pause();
     }
 
 }

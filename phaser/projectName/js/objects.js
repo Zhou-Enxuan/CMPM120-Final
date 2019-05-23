@@ -57,7 +57,16 @@ function myObjects(game, myTilemap) {
     myTilemap.createFromObjects('portal recieve', 19, 'objects', 3, true, true, this.portal);
     myTilemap.createFromObjects('portal_energy_in', 18, 'objects', 2, true, true, this.portal);
     myTilemap.createFromObjects('portal_energy_out', 19, 'objects', 3, true, true, this.portal);
-
+    //objects for enemy
+    this.enemies = game.add.group();
+    this.enemies.enableBody = true;
+    myTilemap.createFromObjects('monster', 21, 'objects', 5, true, true, this.enemies);
+    this.enemies.callAll('animations.add', 'animations', 'monster-walk', [5,6,7,8], 10, true);
+    this.enemies.callAll('animations.play', 'animations', 'monster-walk');
+    this.enemies.setAll('anchor.x', 0.5);
+    this.enemies.setAll('body.velocity.x',50);
+    this.enemies.setAll('body.immovable',true);
+    //objects switches
     
 }
 
@@ -65,6 +74,7 @@ myObjects.prototype = {
     objectAllUpdate: function() {
         this.blockUpdate();
         this.portalUpdate();
+        this.monsterUpdate();
         //console.log(player.y);
     },
     blockUpdate: function() {
@@ -107,6 +117,21 @@ myObjects.prototype = {
                 player.x = this.portal.getChildAt(4).x
                 player.y = this.portal.getChildAt(4).y
             }
+        }
+    },
+    monsterUpdate: function() {
+        game.physics.arcade.collide(player, this.enemies, this.monsterHelper2, null, this);
+        game.physics.arcade.overlap(this.enemies, this.helper, this.monsterHelper, null, this);
+
+    },
+    monsterHelper: function(enemy, helper) {
+        enemy.body.velocity.x *= -1;
+        enemy.scale.x *= -1;
+    },
+    monsterHelper2: function(player, enemies) {
+        if(!player.super){
+            UI.lifeValue -= 0.2;
+            player.super = true;
         }
     }
 }
