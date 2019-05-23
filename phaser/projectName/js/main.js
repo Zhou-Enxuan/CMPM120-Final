@@ -1,4 +1,9 @@
-var player
+//add global variable
+var player;
+var UI;
+var mapObjects;
+
+//load window
 window.onload = function() {
 	game = new Phaser.Game(800,600, Phaser.AUTO, 'Game');
 
