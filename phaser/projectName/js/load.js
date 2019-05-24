@@ -9,8 +9,6 @@ Load.prototype = {
 	preload: function() {
         game.load.path = './assets/img/';
 		game.load.tilemap('level', 'Vol1_floor.json', null, Phaser.Tilemap.TILED_JSON);
-		game.load.tilemap('level-2', 'Vol1_danger.json', null, Phaser.Tilemap.TILED_JSON);
-		game.load.tilemap('level-3', 'Vol1_lava.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.images(['BG', 'hot', 'cold'],['volcano_theme.png','Hot.png','Cold.png']);
 		game.load.atlas('UI','UI.png','UI.json');
         game.load.spritesheet('assets', 'assets.png', 32, 32);
@@ -25,7 +23,7 @@ Load.prototype = {
 	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     
         //have the game centered horizontally
-        this.scale.pageAlignHorizontally = true;
+    this.scale.pageAlignHorizontally = true;
 	this.scale.pageAlignVertically = true;
 	//start the playing stage
         game.state.start('Play');

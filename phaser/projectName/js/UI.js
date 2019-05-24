@@ -66,6 +66,14 @@ myUI.prototype = {
             this.temp = -240;
         }
 
+        if(this.lifeValue > 1) {
+            this.lifeValue = 1;
+        }
+
+        if(this.energyValue > 1){
+            this.energyValue = 1;
+        }
+
         if(this.tempChanged) {
             this.pointerPos = 400 + this.temp;
             this.tempChanged = false;

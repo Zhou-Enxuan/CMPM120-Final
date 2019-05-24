@@ -51,12 +51,19 @@ function myObjects(game, myTilemap) {
     this.portal.enableBody = true;
     this.portalFalg = false;
     this.portalFalg2 = false;
-    myTilemap.createFromObjects('portal level enter', 19, 'objects', 3, true, true, this.portal);
-    myTilemap.createFromObjects('portal level recieve', 18, 'objects', 2, true, true, this.portal);
-    myTilemap.createFromObjects('portal enter', 19, 'objects', 3, true, true, this.portal);
-    myTilemap.createFromObjects('portal recieve', 19, 'objects', 3, true, true, this.portal);
-    myTilemap.createFromObjects('portal_energy_in', 18, 'objects', 2, true, true, this.portal);
-    myTilemap.createFromObjects('portal_energy_out', 19, 'objects', 3, true, true, this.portal);
+    myTilemap.createFromObjects('portal level enter', 36, 'objects', 20, true, true, this.portal);
+    myTilemap.createFromObjects('portal level recieve', 26, 'objects', 10, true, true, this.portal);
+    myTilemap.createFromObjects('portal_energy_in', 26, 'objects', 10, true, true, this.portal);
+    myTilemap.createFromObjects('portal_energy_out', 36, 'objects', 20, true, true, this.portal);
+    this.portal.callAll('animations.add', 'animations', 'portal1', [10,11,12,13,14], 10, true);
+    this.portal.callAll('animations.add', 'animations', 'portal2', [20,21,22,23,24], 10, true);
+    this.portal.forEach(function(portal){
+        if(portal.frame === 10) {
+            portal.animations.play('portal1');
+        } else {
+            portal.animations.play('portal2');
+        }
+    });
     //objects for enemy
     this.enemies = game.add.group();
     this.enemies.enableBody = true;
@@ -66,7 +73,12 @@ function myObjects(game, myTilemap) {
     this.enemies.setAll('anchor.x', 0.5);
     this.enemies.setAll('body.velocity.x',50);
     this.enemies.setAll('body.immovable',true);
-    //objects switches
+    //objects energy
+    this.energy = game.add.group();
+    this.energy.enableBody = true;
+    myTilemap.createFromObjects('energy item', 25, 'objects', 9, true, true, this.energy);
+    game.add.tween(this.energy).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
+
     
 }
 
@@ -75,6 +87,7 @@ myObjects.prototype = {
         this.blockUpdate();
         this.portalUpdate();
         this.monsterUpdate();
+        this.energyUpdate();
         //console.log(player.y);
     },
     blockUpdate: function() {
@@ -133,5 +146,13 @@ myObjects.prototype = {
             UI.lifeValue -= 0.2;
             player.super = true;
         }
+    },
+    energyUpdate: function() {
+        game.physics.arcade.overlap(player, this.energy, this.energyHelper, null, this);
+
+    },
+    energyHelper: function(player, energy) {
+        UI.energyValue += 0.4;
+        energy.kill();
     }
 }

@@ -18,6 +18,8 @@ function Player(game, x, y , key, frame) {
     this.superTime.loop(Phaser.Timer.SECOND * 2, function(){
         this.super = false;
     },this);
+    this.superEffect = game.add.tween(this)
+    this.superEffect.to( {alpha: 2}, 100, Phaser.Easing.Default, true, 0, false).yoyo(true);
     this.superTime.start();
     //add walk animation
     this.animations.add('walk', Phaser.Animation.generateFrameNames('robot_', 1, 11, '', 4), 30, true);
@@ -97,8 +99,11 @@ Player.prototype.update = function() {
 
     if(this.super) {
         this.superTime.resume();
+        this.superEffect.resume();
     } else {
         this.superTime.pause();
+        this.superEffect.pause();
+        this.alpha = 1;
     }
 
 }
