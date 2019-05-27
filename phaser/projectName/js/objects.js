@@ -4,6 +4,7 @@ function myObjects(game, myTilemap) {
     this.helper.enableBody = true;
     myTilemap.createFromObjects('helper', 1, 'assets', 1, true, true, this.helper);
     this.helper.setAll('alpha', 0);
+    this.helper.setAll('body.immovable', true);
     //objects for up down moving blocks
     this.blocks = [];
     this.blocks.push(game.add.group());
@@ -55,6 +56,8 @@ function myObjects(game, myTilemap) {
     myTilemap.createFromObjects('portal level recieve', 26, 'objects', 10, true, true, this.portal);
     myTilemap.createFromObjects('portal_energy_in', 26, 'objects', 10, true, true, this.portal);
     myTilemap.createFromObjects('portal_energy_out', 36, 'objects', 20, true, true, this.portal);
+    myTilemap.createFromObjects('portol_down_enter', 19, 'objects', 20, true, true, this.portal);
+    myTilemap.createFromObjects('portol_down_recieve', 19, 'objects', 20, true, true, this.portal);
     this.portal.callAll('animations.add', 'animations', 'portal1', [10,11,12,13,14], 10, true);
     this.portal.callAll('animations.add', 'animations', 'portal2', [20,21,22,23,24], 10, true);
     this.portal.forEach(function(portal){
@@ -73,13 +76,67 @@ function myObjects(game, myTilemap) {
     this.enemies.setAll('anchor.x', 0.5);
     this.enemies.setAll('body.velocity.x',50);
     this.enemies.setAll('body.immovable',true);
-    //objects energy
+    //objects energy/health item
     this.energy = game.add.group();
     this.energy.enableBody = true;
     myTilemap.createFromObjects('energy item', 25, 'objects', 9, true, true, this.energy);
     game.add.tween(this.energy).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
+    this.health = game.add.group();
+    this.health.enableBody = true;
+    myTilemap.createFromObjects('health item', 32, 'objects', 16, true, true, this.health);
+    game.add.tween(this.health).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
+    //objects for fireBall
+    // this.fireBall = game.add.group();
+    // this.fireBall.enableBody = true;
+    // myTilemap.createFromObjects('fire bomb', 34, 'objects', 18, true, true, this.fireBall);
+    // this.fireBall.setAll('body.gravity.y',3000);
+    // this.shorfire = game.time.create(false);
+    // this.myfireBall = this.fireBall.getChildAt(0);
+    // this.shorfire.loop(Phaser.Timer.SECOND * 1, function() {
+    //     this.myfireBall.body.velocity.y = -100;
+    // }, this);
+    // this.shorfire.start();
+    //objects for thorn
+    this.thornDown = game.add.group();
+    this.thornDown.enableBody = true;
+    myTilemap.createFromObjects('cer_down', 20, 'objects', 4, true, true, this.thornDown);
+    this.thornUp = game.add.group();
+    this.thornUp.enableBody = true;
+    myTilemap.createFromObjects('cer_up', 20, 'objects', 4, true, true, this.thornUp);
+    this.thornDown.callAll('body.setSize', 'body', 28, 25, 2, 7);
+    this.thornUp.callAll('body.setSize', 'body', 28, 25, 2, 7);
+    this.thronflag = false;
+    game.time.events.loop(Phaser.Timer.SECOND * 1.5, function(){
+        if(!this.thronflag) {
+            this.thornDown.setAll('body.velocity.y', 100);
+            this.thornUp.setAll('body.velocity.y', -100);
+            this.thronflag = true;
+        }
+        else {
+            this.thornDown.setAll('body.velocity.y', -100);
+            this.thornUp.setAll('body.velocity.y', 100);
+            this.thronflag = false;
+        }
+        //console.log(this.thornDown.getChildAt(0).y);
+        //console.log(this.thornUp.getChildAt(0).y);
 
-    
+    },this);
+    this.movethron = game.add.group();
+    this.movethron.enableBody = true;
+    myTilemap.createFromObjects('down_cer', 20, 'objects', 4, true, true, this.movethron);
+    //objects for switch
+    this.switch = game.add.group();
+    this.switch.enableBody = true;
+    myTilemap.createFromObjects('key_down_cer', 16, 'objects', 0, true, true, this.switch);
+    this.switch.getChildAt(0).isOn = false;
+    myTilemap.createFromObjects('key_for_door', 16, 'objects', 0, true, true, this.switch);
+    this.switch.getChildAt(1).isOn = false;
+    //objects for door
+    this.door = game.add.group();
+    this.door.enableBody = true;
+    myTilemap.createFromObjects('door', 31, 'objects', 15, true, true, this.door);
+    this.door.setAll('body.immovable', true);
+
 }
 
 myObjects.prototype = {
@@ -88,6 +145,14 @@ myObjects.prototype = {
         this.portalUpdate();
         this.monsterUpdate();
         this.energyUpdate();
+        this.healthUpdate();
+        this.thronUpdate();
+        this.switchUpdate();
+        game.physics.arcade.collide(player, this.door);
+        // console.log(this.switch.getChildAt(0).isOn);
+        // console.log(this.switch.getChildAt(1).isOn);
+        //this.fireBallUpdate();
+        //console.log(player.x);
         //console.log(player.y);
     },
     blockUpdate: function() {
@@ -106,8 +171,6 @@ myObjects.prototype = {
         }
     },
     portalHelper: function(player, portal) {
-        console.log(this.portalFlag);
-        console.log(this.portalFlag2);
         //console.log(this.portal.getIndex(portal));
         if(!this.portalFalg2){
             this.portalFalg2 = true;
@@ -154,5 +217,74 @@ myObjects.prototype = {
     energyHelper: function(player, energy) {
         UI.energyValue += 0.4;
         energy.kill();
-    }
+    },
+    healthUpdate: function() {
+        game.physics.arcade.overlap(player, this.health, this.healthHelper, null, this);
+    },
+    healthHelper: function(player, health) {
+        UI.lifeValue += 0.4;
+        health.kill();
+    },
+    // fireBallUpdate: function() {
+    //     game.physics.arcade.collide(this.fireBall, this.helper);
+    //     game.world.bringToTop(this.fireBall);
+    //     game.world.bringToTop(this.helper);
+    //     this.fireBall.forEach(function(fireBall){
+    //         this.myfireBall = fireBall;
+    //         if(fireBall.body.touching.down){
+    //             console.log('floor');
+    //             this.shorfire.resume();
+    //         } 
+    //         else {
+    //             console.log('air');
+    //             this.shorfire.pause();
+    //         }
+    //         console.log(fireBall.body.velocity.y)
+    //     });
+        
+    // },
+    // fireBallHelper: function(player, fireBall) {
+
+    // }
+    thronUpdate: function() {
+        if(this.thornDown.getChildAt(0).y > 2243) {
+            this.thornDown.setAll('y',2243);
+            this.thornDown.setAll('body.velocity.y', 0);
+        }
+        else if (this.thornDown.getChildAt(0).y < 2147) {
+            this.thornDown.setAll('y',2147);
+            this.thornDown.setAll('body.velocity.y', 0);
+        }
+        if(this.thornUp.getChildAt(0).y < 2147) {
+            this.thornUp.setAll('y',2147);
+            this.thornUp.setAll('body.velocity.y', 0);
+        }else if(this.thornUp.getChildAt(0).y > 2243) {
+            this.thornUp.setAll('y',2243);
+            this.thornUp.setAll('body.velocity.y', 0);
+        }
+        game.physics.arcade.overlap(player, this.thornDown,this.thronHelper, null, this);
+        game.physics.arcade.overlap(player, this.thornUp,this.thronHelper, null, this);
+        game.physics.arcade.overlap(player, this.movethron,this.thronHelper, null, this);
+    },
+    thronHelper: function(player, thorn) {
+        if(!player.super) {
+            UI.lifeValue -= 0.2;
+            player.super = true;
+        }
+    },
+    switchUpdate: function() {
+        game.physics.arcade.overlap(player, this.switch,this.switchHelper, null, this);
+    },
+    switchHelper: function(player, switchs) {
+        console.log(this.switch.getChildIndex(switchs));
+        if(!switchs.isOn) {
+            switchs.frame = 1;
+            if(this.switch.getChildIndex(switchs) === 0) {
+                this.movethron.callAll('kill');
+            }
+            else if(this.switch.getChildIndex(switchs) === 1) {
+                this.door.callAll('kill');
+            }
+        }
+    },
 }

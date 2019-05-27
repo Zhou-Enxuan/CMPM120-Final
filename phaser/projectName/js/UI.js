@@ -100,6 +100,9 @@ myUI.prototype = {
             }
         }
 
+        if(this.lifeValue <= 0) {
+            game.state.start('Play');
+        }
         this.lifePercent(this.lifeValue);
         this.energyPercent(this.energyValue);
     },

@@ -14,15 +14,7 @@ Play.prototype = {
         //can collide with different layer with different affect
         this.map = game.add.tilemap('level');
         this.map.addTilesetImage('test2', 'assets');
-        this.dangers = game.add.group();
-        this.dangers.enableBody = true;
-        this.map.createFromObjects('danger', 21, 'assets', 5, true, true, this.dangers);
-        this.map.createFromObjects('danger', 19, 'assets', 3, true, true, this.dangers);
-        this.map.createFromObjects('danger', 20, 'assets', 4, true, true, this.dangers);
-        this.map.createFromObjects('danger', 30, 'assets', 14, true, true, this.dangers);
-        this.map.createFromObjects('danger', 28, 'assets', 12, true, true, this.dangers);
-        this.map.createFromObjects('danger', 29, 'assets', 13, true, true, this.dangers);
-        this.dangers.setAll('body.immovable', true);
+
 
         //making the blank part not collidable
 		this.map.setCollisionByExclusion([]);
@@ -48,6 +40,7 @@ Play.prototype = {
         //creating the UI
         player = new Player(game,60,385,'UI','robot_0001');
         game.add.existing(player);
+        
 
         this.lava = game.add.group();
         this.lava.enableBody = true;
@@ -92,6 +85,9 @@ Play.prototype = {
         }, this);
 
         this.zflag = true;
+        this.heatArea = game.add.group();
+        this.map.createFromObjects('heatArea', 1, 'assets', 1, true, true, this.heatArea);
+        this.heatArea.setAll('alpha', 0);
 
 
     },
@@ -120,8 +116,6 @@ Play.prototype = {
         //console.log('UI is: ' + UI.pointerPos);
 
         //make player collide with heat floor and run touchLava function
-        this.touchHeat = game.physics.arcade.collide(player, this.dangers, this.touchLava, null, this);
-
         if(!this.touchHeat) {
             this.tempGrow.delay = Phaser.Timer.SECOND * 0.5;
         }
@@ -132,7 +126,7 @@ Play.prototype = {
         }
         //make player collide with normal floor
         game.physics.arcade.collide(player, this.floor);
-
+        this.touchHeat = game.physics.arcade.overlap(player, this.heatArea, this.touchLava, null, this);
         this.isHitLava = game.physics.arcade.overlap(player, this.lava, this.hitLava, null, this);
 
         if(!this.isHitLava) {
@@ -149,14 +143,16 @@ Play.prototype = {
     //function that when player is landing on heat floor
     touchLava: function(player, lava) {
         //make the hot screen start showing up
-        this.tempGrow.delay = Phaser.Timer.SECOND * 0.05;
+        this.tempGrow.delay = Phaser.Timer.SECOND * 0.01;
         // if (this.hot.alpha < 1) {
         //     this.hot.alpha += 0.01;
         // }
         //playing the heat sound, don't make play again if it is already playing
+
         if(!this.heatSound.isPlaying) {
             this.heatSound.play('', 0, 0.5, true);
         }
+        console.log('is heating');
         //console.log('touched lava');
 
     }, 
@@ -184,6 +180,9 @@ Play.prototype = {
 			    game.debug.geom(this.zone, 'rgba(255,0,0,0.25');
             }
             game.debug.body(player);
+            game.debug.physicsGroup(mapObjects.thornDown);
+            game.debug.physicsGroup(mapObjects.thornUp);
+
         }
 
     }
