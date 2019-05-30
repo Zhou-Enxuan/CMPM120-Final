@@ -86,16 +86,15 @@ function myObjects(game, myTilemap) {
     myTilemap.createFromObjects('health item', 32, 'objects', 16, true, true, this.health);
     game.add.tween(this.health).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
     //objects for fireBall
-    // this.fireBall = game.add.group();
-    // this.fireBall.enableBody = true;
-    // myTilemap.createFromObjects('fire bomb', 34, 'objects', 18, true, true, this.fireBall);
-    // this.fireBall.setAll('body.gravity.y',3000);
-    // this.shorfire = game.time.create(false);
-    // this.myfireBall = this.fireBall.getChildAt(0);
-    // this.shorfire.loop(Phaser.Timer.SECOND * 1, function() {
-    //     this.myfireBall.body.velocity.y = -100;
-    // }, this);
-    // this.shorfire.start();
+    this.fireBall = game.add.group();
+    this.fireBall.enableBody = true;
+    myTilemap.createFromObjects('fire bomb', 34, 'objects', 18, true, true, this.fireBall);
+    this.fireBall.setAll('body.gravity.y',3000);
+    this.fireBall.callAll('animations.add', 'animations', 'fireballs',[18,19], 10, true);
+    this.fireBall.callAll('animations.play', 'animations', 'fireballs');
+    game.time.events.loop(Phaser.Timer.SECOND * 2, function() {
+        this.fireBall.setAll('body.velocity.y', -1300);
+    }, this);
     //objects for thorn
     this.thornDown = game.add.group();
     this.thornDown.enableBody = true;
@@ -123,6 +122,7 @@ function myObjects(game, myTilemap) {
     },this);
     this.movethron = game.add.group();
     this.movethron.enableBody = true;
+    this.fireInAir = true;
     myTilemap.createFromObjects('down_cer', 20, 'objects', 4, true, true, this.movethron);
     //objects for switch
     this.switch = game.add.group();
@@ -148,10 +148,13 @@ myObjects.prototype = {
         this.healthUpdate();
         this.thronUpdate();
         this.switchUpdate();
+        //player.body.acceleration.x = 0;
         game.physics.arcade.collide(player, this.door);
+        //console.log(player.body.velocity.y);
+
         // console.log(this.switch.getChildAt(0).isOn);
         // console.log(this.switch.getChildAt(1).isOn);
-        //this.fireBallUpdate();
+        this.fireBallUpdate();
         //console.log(player.x);
         //console.log(player.y);
     },
@@ -196,18 +199,30 @@ myObjects.prototype = {
         }
     },
     monsterUpdate: function() {
-        game.physics.arcade.collide(player, this.enemies, this.monsterHelper2, null, this);
+        game.physics.arcade.overlap(player, this.enemies, this.monsterHelper2, null, this);
         game.physics.arcade.overlap(this.enemies, this.helper, this.monsterHelper, null, this);
-
     },
     monsterHelper: function(enemy, helper) {
         enemy.body.velocity.x *= -1;
         enemy.scale.x *= -1;
     },
-    monsterHelper2: function(player, enemies) {
+    monsterHelper2: function(player, enemy) {
         if(!player.super){
             UI.lifeValue -= 0.2;
             player.super = true;
+            if(enemy.x - player.x < 0) {
+                player.body.acceleration.x = 50000;
+                game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
+                    player.body.acceleration.x = 0;
+                },this);
+                console.log(player.body.acceleration.x);
+            } else {
+                player.body.acceleration.x = -50000;
+                game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
+                    player.body.acceleration.x = 0;
+                },this);
+                console.log(player.body.acceleration.x);
+            }
         }
     },
     energyUpdate: function() {
@@ -225,27 +240,29 @@ myObjects.prototype = {
         UI.lifeValue += 0.4;
         health.kill();
     },
-    // fireBallUpdate: function() {
-    //     game.physics.arcade.collide(this.fireBall, this.helper);
-    //     game.world.bringToTop(this.fireBall);
-    //     game.world.bringToTop(this.helper);
-    //     this.fireBall.forEach(function(fireBall){
-    //         this.myfireBall = fireBall;
-    //         if(fireBall.body.touching.down){
-    //             console.log('floor');
-    //             this.shorfire.resume();
-    //         } 
-    //         else {
-    //             console.log('air');
-    //             this.shorfire.pause();
-    //         }
-    //         console.log(fireBall.body.velocity.y)
-    //     });
-        
-    // },
-    // fireBallHelper: function(player, fireBall) {
-
-    // }
+    fireBallUpdate: function() {
+        game.physics.arcade.collide(this.fireBall, this.helper);
+        game.physics.arcade.overlap(player, this.fireBall, this.fireBallHelper, null, this);
+    },
+    fireBallHelper: function(player, fireBall) {
+        if(!player.super){
+            UI.lifeValue -= 0.2;
+            player.super = true;
+            if(fireBall.x - player.x < 0) {
+                player.body.acceleration.x = 50000;
+                game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
+                    player.body.acceleration.x = 0;
+                },this);
+                console.log(player.body.acceleration.x);
+            } else {
+                player.body.acceleration.x = -50000;
+                game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
+                    player.body.acceleration.x = 0;
+                },this);
+                console.log(player.body.acceleration.x);
+            }
+        }
+    },
     thronUpdate: function() {
         if(this.thornDown.getChildAt(0).y > 2243) {
             this.thornDown.setAll('y',2243);
@@ -267,16 +284,29 @@ myObjects.prototype = {
         game.physics.arcade.overlap(player, this.movethron,this.thronHelper, null, this);
     },
     thronHelper: function(player, thorn) {
-        if(!player.super) {
+        if(!player.super){
             UI.lifeValue -= 0.2;
             player.super = true;
+            if(thorn.x - player.x < 0) {
+                player.body.acceleration.x = 50000;
+                game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
+                    player.body.acceleration.x = 0;
+                },this);
+                console.log(player.body.acceleration.x);
+            } else {
+                player.body.acceleration.x = -50000;
+                game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
+                    player.body.acceleration.x = 0;
+                },this);
+                console.log(player.body.acceleration.x);
+            }
         }
     },
     switchUpdate: function() {
         game.physics.arcade.overlap(player, this.switch,this.switchHelper, null, this);
     },
     switchHelper: function(player, switchs) {
-        console.log(this.switch.getChildIndex(switchs));
+        //console.log(this.switch.getChildIndex(switchs));
         if(!switchs.isOn) {
             switchs.frame = 1;
             if(this.switch.getChildIndex(switchs) === 0) {

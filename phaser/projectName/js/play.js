@@ -86,6 +86,7 @@ Play.prototype = {
 
         this.zflag = true;
         this.heatArea = game.add.group();
+        this.heatArea.enableBody = true;
         this.map.createFromObjects('heatArea', 1, 'assets', 1, true, true, this.heatArea);
         this.heatArea.setAll('alpha', 0);
 
@@ -143,7 +144,7 @@ Play.prototype = {
     //function that when player is landing on heat floor
     touchLava: function(player, lava) {
         //make the hot screen start showing up
-        this.tempGrow.delay = Phaser.Timer.SECOND * 0.01;
+        this.tempGrow.delay = Phaser.Timer.SECOND * 0.3;
         // if (this.hot.alpha < 1) {
         //     this.hot.alpha += 0.01;
         // }

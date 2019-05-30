@@ -100,7 +100,7 @@ myUI.prototype = {
             }
         }
 
-        if(this.lifeValue <= 0) {
+        if(this.lifeValue <= 0.0001) {
             game.state.start('Play');
         }
         this.lifePercent(this.lifeValue);
