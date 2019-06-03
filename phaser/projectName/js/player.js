@@ -41,13 +41,15 @@ function Player(game, x, y , key, frame) {
             'events': {
                 'stop':  'stand',
                 'jumping':  'jump',
+                'cooling/heating':  'cool/heat',
                 'falling': 'fall'
             }
         },
         {
             'name':     'jump',
             'events': {
-                'falling':  'fall'
+                'falling':  'fall',
+                'dashing':  'dash'
             }
         },
         {
@@ -180,9 +182,11 @@ Player.prototype.update = function() {
 
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)) {
                 this.playerSM.consumeEvent('jumping');
+            } else if(game.input.keyboard.justPressed(Phaser.Keyboard.Z)){
+                this.playerSM.consumeEvent('cooling/heating');
             } else if (!this.isGrounded) {
                 this.playerSM.consumeEvent('falling');
-            }
+            } 
             if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
                 this.body.velocity.x = 300;
                 this.scale.x = 1;
@@ -230,8 +234,14 @@ Player.prototype.update = function() {
                 this.jump = true;
             }
 
-            if(this.jump && game.input.keyboard.upDuration(Phaser.Keyboard.UP)) {
+            if(game.input.keyboard.upDuration(Phaser.Keyboard.UP)) {
                 this.playerSM.consumeEvent('falling');
+            }
+
+            if(game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
+                this.secondMove = true;
+                this.playerSM.consumeEvent('dashing');
+                console.log('hello');
             }
 
 
@@ -276,7 +286,7 @@ Player.prototype.update = function() {
 
             this.body.gravity.y = 0;
             this.body.velocity.y = 0;
-            this.body.velocity.x = this.scale.x * 1000;
+            this.body.acceleration.x = this.scale.x * 11000;
             game.time.events.add(Phaser.Timer.SECOND * 0.2, this.stopDash, this);
 
         break;
@@ -285,7 +295,11 @@ Player.prototype.update = function() {
 
             if(game.input.keyboard.isDown(Phaser.Keyboard.Z) && UI.energyValue > 0){
                 UI.energyValue -= 0.005;
-                UI.temp -= 1.5;
+                if(level_stage === 'valcano') {
+                    UI.temp -= 1.5;
+                } else if(level_stage === 'ice') {
+                    UI.temp += 1.5;
+                }
                 UI.tempChanged = true;
             } else {
                 this.playerSM.consumeEvent('stop');
@@ -307,6 +321,7 @@ Player.prototype.update = function() {
 
 //function that help player stop dash after then press dash move
 Player.prototype.stopDash = function() {
+    this.body.acceleration.x = 0;
     this.body.velocity.x = 0;
     this.body.gravity.y = 2800;
     this.playerSM.consumeEvent('falling');

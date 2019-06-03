@@ -2,6 +2,7 @@ var Play = function(game) {};
 //the playing state
 Play.prototype = {
     create: function() {
+        level_stage = 'valcano';
         //enable physics to the world
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -91,7 +92,7 @@ Play.prototype = {
         this.heatArea.setAll('alpha', 0);
         this.touchHeat = false;
 
-
+        level_stage = 'valcano';
     },
 
     update: function() {
