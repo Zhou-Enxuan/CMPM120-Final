@@ -2,6 +2,7 @@ var Play = function(game) {};
 //the playing state
 Play.prototype = {
     create: function() {
+        level_stage = 'valcano';
         //enable physics to the world
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -90,7 +91,7 @@ Play.prototype = {
         this.map.createFromObjects('heatArea', 1, 'assets', 1, true, true, this.heatArea);
         this.heatArea.setAll('alpha', 0);
 
-
+        level_stage = 'valcano';
     },
 
     update: function() {
