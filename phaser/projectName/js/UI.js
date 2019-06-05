@@ -79,7 +79,7 @@ myUI.prototype = {
             this.tempChanged = false;
         }
 
-        if(this.temp >= 240) {
+        if(this.temp >= 240 || this.temp <= -240) {
             this.heatDamage.resume();
         } else {
             this.heatDamage.pause();

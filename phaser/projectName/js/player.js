@@ -156,10 +156,9 @@ Player.prototype.update = function() {
 //         UI.tempChanged = true;
 //     }
     this.state = this.playerSM.getState();
-    console.log(this.state.name);
+    //console.log(this.state.name);
 
     switch(this.state.name) {
-        // ***********************************************************
         case 'stand':
             this.body.velocity.x = 0;
             this.body.gravity.y = 2800;
@@ -230,7 +229,7 @@ Player.prototype.update = function() {
             this.frameName = 'robot_0001';
 
             if(game.input.keyboard.downDuration(Phaser.Keyboard.UP, 150)) {
-                this.body.velocity.y = -700;
+                this.body.velocity.y = -600;
                 this.jump = true;
             }
 
@@ -262,7 +261,7 @@ Player.prototype.update = function() {
             this.frameName = 'robot_0001';
 
             if(game.input.keyboard.downDuration(Phaser.Keyboard.UP, 150)) {
-                this.body.velocity.y = -700;
+                this.body.velocity.y = -600;
                 this.jump = true;
             }
 
@@ -309,6 +308,9 @@ Player.prototype.update = function() {
             console.warn('Unknown state');
     }
 
+    // if(game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+    //     this.body.velocity.y = -300;
+    // }
     if(this.super) {
         this.superTime.resume();
         this.superEffect.resume();

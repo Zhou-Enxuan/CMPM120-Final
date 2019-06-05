@@ -10,6 +10,9 @@ Ice.prototype = {
         this.map.addTilesetImage('asset2', 'asset2');
 
         this.map.setCollisionByExclusion([]);
+
+        mapObjects = new Objects_ice(game, this.map);
+
         //creating layer in tilemaps
         this.floor = this.map.createLayer('ice');
         //resize the world to tilemap size
@@ -55,6 +58,7 @@ Ice.prototype = {
         }
 
         UI.updateUI();
+        mapObjects.objectAllupdate();
 
         game.physics.arcade.collide(player, this.floor);
 
