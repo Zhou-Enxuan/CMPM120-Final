@@ -19,13 +19,19 @@ function myUI(game) {
     //add a heart to repersent life
     this.lifeScreen = game.add.sprite(5.5,2.5,'UI','lifeOut');
     this.lifeScreen.fixedToCamera = true;
-    this.life = game.add.sprite(39,161,'UI','LifeBar');
+    this.life = game.add.sprite(38.8,161,'UI','LifeBar');
     this.life.anchor.set(1);
     this.lifeValue = 1;
     this.life.fixedToCamera = true;
-    this.energyScreen = game.add.sprite(45.5,2.5,'UI','coolEnergyOut');
+    console.log(level_stage);
+    if(level_stage == 'ice'){
+        this.energyScreen = game.add.sprite(45.5,2.5,'UI','heatEnergyOut');
+        this.energy = game.add.sprite(77.5,159,'UI','heatEnergy');
+    } else {
+        this.energyScreen = game.add.sprite(45.5,2.5,'UI','coolEnergyOut');
+        this.energy = game.add.sprite(78.8,161,'UI','coolEnery');
+    }
     this.energyScreen.fixedToCamera = true;
-    this.energy = game.add.sprite(79,161,'UI','coolEnery');
     this.energy.anchor.set(1);
     this.energyValue = 1;
     this.energy.fixedToCamera = true;
@@ -36,6 +42,11 @@ function myUI(game) {
     //where the pointer should be depend on temp
     this.pointerPos = 400;
     this.tempChanged = false;
+    this.heatDamage = game.time.create(false);
+    this.heatDamage.loop(Phaser.Timer.SECOND * 2,function(){
+        this.lifeValue -= 0.1;
+    },this);
+    this.heatDamage.start();
 }
 
 //myUI.prototype = Object.create(Phaser.Sprite.prototype);
@@ -44,12 +55,14 @@ function myUI(game) {
 myUI.prototype = {
     updateUI: function() {
         if(this.pointer.cameraOffset.x > this.pointerPos && this.pointer.cameraOffset.x > 160) {
-            this.pointer.cameraOffset.x--;
+            var speed = (this.pointer.cameraOffset.x - this.pointerPos)/10;
+            this.pointer.cameraOffset.x -= speed;
             //console.log('UI--: ' + UI.pointer.x);
         }
 
         if(this.pointer.cameraOffset.x < this.pointerPos && this.pointer.cameraOffset.x < 640) {
-            this.pointer.cameraOffset.x++;
+            var speed = (this.pointerPos - this.pointer.cameraOffset.x)/10;
+            this.pointer.cameraOffset.x += speed;
             //console.log('UI++: ' + UI.pointer.x);
         }
 
@@ -59,9 +72,23 @@ myUI.prototype = {
             this.temp = -240;
         }
 
+        if(this.lifeValue > 1) {
+            this.lifeValue = 1;
+        }
+
+        if(this.energyValue > 1){
+            this.energyValue = 1;
+        }
+
         if(this.tempChanged) {
             this.pointerPos = 400 + this.temp;
             this.tempChanged = false;
+        }
+
+        if(this.temp >= 240 || this.temp <= -240) {
+            this.heatDamage.resume();
+        } else {
+            this.heatDamage.pause();
         }
 
         if(this.pointer.cameraOffset.x > 400) {
@@ -79,11 +106,14 @@ myUI.prototype = {
             }
         }
 
+        if(this.lifeValue <= 0.0001) {
+            game.state.start('Play');
+        }
         this.lifePercent(this.lifeValue);
         this.energyPercent(this.energyValue);
     },
     lifePercent: function(percent) {
-        this.currentLife = 160 * percent;
+        this.currentLife = 155 * percent;
         if(this.life.height > this.currentLife) {
             this.life.height -= 2;
         }
@@ -95,7 +125,7 @@ myUI.prototype = {
         }
     },
     energyPercent: function(percent) {
-        this.currentEnergy = 160 * percent;
+        this.currentEnergy = 155 * percent;
         if(this.energy.height > this.currentEnergy) {
             this.energy.height -= 2;
         }
