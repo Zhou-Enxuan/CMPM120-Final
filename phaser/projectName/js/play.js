@@ -86,12 +86,6 @@ Play.prototype = {
         }, this);
 
         this.zflag = true;
-        this.heatArea = game.add.group();
-        this.heatArea.enableBody = true;
-        this.map.createFromObjects('heatArea', 1, 'assets', 1, true, true, this.heatArea);
-        this.heatArea.setAll('alpha', 0);
-
-        level_stage = 'valcano';
     },
 
     update: function() {
@@ -114,21 +108,8 @@ Play.prototype = {
         UI.updateUI();
         mapObjects.objectAllUpdate();
 
-        //console.log('UIx is: ' + UI.pointer.x);
-        //console.log('UI is: ' + UI.pointerPos);
-
-        //make player collide with heat floor and run touchLava function
-        if(!this.touchHeat) {
-            this.tempGrow.delay = Phaser.Timer.SECOND * 0.5;
-        }
-
-        //stop sound effect if player is not on heat floor
-        if(!this.touchHeat) {
-            this.heatSound.stop();
-        }
         //make player collide with normal floor
         game.physics.arcade.collide(player, this.floor);
-        this.touchHeat = game.physics.arcade.overlap(player, this.heatArea, this.touchLava, null, this);
         this.isHitLava = game.physics.arcade.overlap(player, this.lava, this.hitLava, null, this);
 
         if(!this.isHitLava) {
@@ -142,22 +123,6 @@ Play.prototype = {
 
     },
 
-    //function that when player is landing on heat floor
-    touchLava: function(player, lava) {
-        //make the hot screen start showing up
-        this.tempGrow.delay = Phaser.Timer.SECOND * 0.3;
-        // if (this.hot.alpha < 1) {
-        //     this.hot.alpha += 0.01;
-        // }
-        //playing the heat sound, don't make play again if it is already playing
-
-        if(!this.heatSound.isPlaying) {
-            this.heatSound.play('', 0, 0.5, true);
-        }
-        console.log('is heating');
-        //console.log('touched lava');
-
-    }, 
 
     hitLava: function(player, lava) {
         if(!player.super) {
