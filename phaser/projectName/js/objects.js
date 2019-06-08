@@ -136,7 +136,6 @@ function myObjects(game, myTilemap) {
     this.door.enableBody = true;
     myTilemap.createFromObjects('door', 31, 'objects', 15, true, true, this.door);
     this.door.setAll('body.immovable', true);
-
 }
 
 myObjects.prototype = {

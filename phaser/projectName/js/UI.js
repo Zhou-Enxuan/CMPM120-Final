@@ -23,9 +23,15 @@ function myUI(game) {
     this.life.anchor.set(1);
     this.lifeValue = 1;
     this.life.fixedToCamera = true;
-    this.energyScreen = game.add.sprite(45.5,2.5,'UI','coolEnergyOut');
+    console.log(level_stage);
+    if(level_stage == 'ice'){
+        this.energyScreen = game.add.sprite(45.5,2.5,'UI','heatEnergyOut');
+        this.energy = game.add.sprite(77.5,159,'UI','heatEnergy');
+    } else {
+        this.energyScreen = game.add.sprite(45.5,2.5,'UI','coolEnergyOut');
+        this.energy = game.add.sprite(78.8,161,'UI','coolEnery');
+    }
     this.energyScreen.fixedToCamera = true;
-    this.energy = game.add.sprite(78.8,161,'UI','coolEnery');
     this.energy.anchor.set(1);
     this.energyValue = 1;
     this.energy.fixedToCamera = true;

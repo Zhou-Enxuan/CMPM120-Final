@@ -2,6 +2,7 @@ var Ice = function(game) {};
 
 Ice.prototype = {
     create: function() {
+        level_stage = 'ice';
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.physics.arcade.TILE_BIAS = 32;
         game.add.image(0,0,'Ice-BG');
@@ -11,14 +12,17 @@ Ice.prototype = {
 
         this.map.setCollisionByExclusion([]);
 
-        mapObjects = new Objects_ice(game, this.map);
-
         //creating layer in tilemaps
         this.floor = this.map.createLayer('ice');
         //resize the world to tilemap size
         this.floor.resizeWorld();
 
-        player = new Player(game,80,385,'UI','robot_0001');
+        mapObjects = new Objects_ice(game, this.map, this.floor);
+        console.log(this.floor.z);
+        game.world.bringToTop(this.floor);
+
+
+        player = new Player(game,200,416,'UI','robot_0001');
         game.add.existing(player);
 
         this.water = game.add.group();
@@ -48,7 +52,6 @@ Ice.prototype = {
         }, this);
 
         this.zflag = true;
-        level_stage = 'ice';
     },
 
     update: function() {
