@@ -57,7 +57,8 @@ function Player(game, x, y , key, frame) {
             'events': {
                 'stop': 'stand',
                 'double jumping':   'double jump',
-                'dashing':  'dash'
+                'dashing':  'dash',
+                'falling': 'fall'
 
             }
         },
@@ -290,10 +291,10 @@ Player.prototype.update = function() {
 
         break;
         case 'cool/heat':
+            player.body.velocity.x = 0;
             this.frameName = 'robot_0001';
-
             if(game.input.keyboard.isDown(Phaser.Keyboard.Z) && UI.energyValue > 0){
-                UI.energyValue -= 0.005;
+                UI.energyValue -= 0.004;
                 if(level_stage === 'valcano') {
                     UI.temp -= 1.5;
                 } else if(level_stage === 'ice') {
