@@ -86,7 +86,6 @@ Play.prototype = {
         }, this);
 
         this.zflag = true;
-<<<<<<< HEAD
         this.heatArea = game.add.group();
         this.heatArea.enableBody = true;
         this.map.createFromObjects('heatArea', 1, 'assets', 1, true, true, this.heatArea);
@@ -94,8 +93,7 @@ Play.prototype = {
         this.touchHeat = false;
 
         level_stage = 'valcano';
-=======
->>>>>>> ZhouEnxuan
+
     },
 
     update: function() {
