@@ -28,11 +28,8 @@ Play.prototype = {
         this.floor.resizeWorld();
 
         //add and playing bakground music
-        this.BGM = game.add.audio('BGM');
-        //this.BGM.play('', 0, 0.5, true);
-
-        //add sound effect for player stand on the heating floor
-        this.heatSound = game.add.audio('heat');
+        BGM = game.add.audio('BGM');
+        BGM.play('', 0, 0.5, true);
 
         //add sprite of the effect that screen turn red or blue depend on temp
 
@@ -86,11 +83,6 @@ Play.prototype = {
         }, this);
 
         this.zflag = true;
-        this.heatArea = game.add.group();
-        this.heatArea.enableBody = true;
-        this.map.createFromObjects('heatArea', 1, 'assets', 1, true, true, this.heatArea);
-        this.heatArea.setAll('alpha', 0);
-        this.touchHeat = false;
 
         level_stage = 'valcano';
 
@@ -142,9 +134,6 @@ Play.prototype = {
             game.world.moveUp(this.floor);
         }
         this.zflag = false;
-        if(!this.heatSound.isPlaying) {
-            this.heatSound.play('', 0, 0.5, true);
-        }
     },
     //showing the debug info
     render: function() {

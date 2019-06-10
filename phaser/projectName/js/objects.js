@@ -5,6 +5,8 @@ function myObjects(game, myTilemap) {
     myTilemap.createFromObjects('helper', 1, 'assets', 1, true, true, this.helper);
     this.helper.setAll('alpha', 0);
     this.helper.setAll('body.immovable', true);
+    //add hit sound effect
+    this.hitSound = game.add.audio('hit');
     //objects for up down moving blocks
     this.blocks = [];
     this.blocks.push(game.add.group());
@@ -67,6 +69,7 @@ function myObjects(game, myTilemap) {
             portal.animations.play('portal2');
         }
     });
+    this.portalSound = game.add.audio('portal');
     //objects for enemy
     this.enemies = game.add.group();
     this.enemies.enableBody = true;
@@ -85,6 +88,7 @@ function myObjects(game, myTilemap) {
     this.health.enableBody = true;
     myTilemap.createFromObjects('health item', 32, 'objects', 16, true, true, this.health);
     game.add.tween(this.health).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
+    this.collectSound = game.add.audio('item');
     //objects for fireBall
     this.fireBall = game.add.group();
     this.fireBall.enableBody = true;
@@ -131,11 +135,18 @@ function myObjects(game, myTilemap) {
     this.switch.getChildAt(0).isOn = false;
     myTilemap.createFromObjects('key_for_door', 16, 'objects', 0, true, true, this.switch);
     this.switch.getChildAt(1).isOn = false;
+    this.switchSound = game.add.audio('switch');
     //objects for door
     this.door = game.add.group();
     this.door.enableBody = true;
     myTilemap.createFromObjects('door', 31, 'objects', 15, true, true, this.door);
     this.door.setAll('body.immovable', true);
+    //add clearItem
+    this.clearItem = game.add.group();
+    this.clearItem.enableBody = true;
+    myTilemap.createFromObjects('clearItem', 41, 'objects', 25, true, true, this.clearItem);
+    myTilemap.createFromObjects('clearItem', 42, 'objects', 26, true, true, this.clearItem);
+    game.add.tween(this.clearItem).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
 }
 
 myObjects.prototype = {
@@ -147,6 +158,7 @@ myObjects.prototype = {
         this.healthUpdate();
         this.thronUpdate();
         this.switchUpdate();
+        this.clearItemUpdate();
         //player.body.acceleration.x = 0;
         game.physics.arcade.collide(player, this.door);
         //console.log(player.body.velocity.y);
@@ -175,6 +187,7 @@ myObjects.prototype = {
     portalHelper: function(player, portal) {
         //console.log(this.portal.getIndex(portal));
         if(!this.portalFalg2){
+            this.portalSound.play('', 0, 0.5, false);
             this.portalFalg2 = true;
             if(this.portal.getIndex(portal) === 0) {
                 player.x = this.portal.getChildAt(1).x
@@ -207,6 +220,7 @@ myObjects.prototype = {
     },
     monsterHelper2: function(player, enemy) {
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             player.super = true;
             if(enemy.x - player.x < 0) {
@@ -229,6 +243,7 @@ myObjects.prototype = {
 
     },
     energyHelper: function(player, energy) {
+        this.collectSound.play('', 0, 0.5, false);
         UI.energyValue += 0.4;
         energy.kill();
     },
@@ -236,6 +251,7 @@ myObjects.prototype = {
         game.physics.arcade.overlap(player, this.health, this.healthHelper, null, this);
     },
     healthHelper: function(player, health) {
+        this.collectSound.play('', 0, 0.5, false);
         UI.lifeValue += 0.4;
         health.kill();
     },
@@ -245,6 +261,7 @@ myObjects.prototype = {
     },
     fireBallHelper: function(player, fireBall) {
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             player.super = true;
             if(fireBall.x - player.x < 0) {
@@ -284,6 +301,7 @@ myObjects.prototype = {
     },
     thronHelper: function(player, thorn) {
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             player.super = true;
             if(thorn.x - player.x < 0) {
@@ -307,6 +325,7 @@ myObjects.prototype = {
     switchHelper: function(player, switchs) {
         //console.log(this.switch.getChildIndex(switchs));
         if(!switchs.isOn) {
+            this.switchSound.play('', 0, 0.5, false);
             switchs.frame = 1;
             if(this.switch.getChildIndex(switchs) === 0) {
                 this.movethron.callAll('kill');
@@ -316,4 +335,13 @@ myObjects.prototype = {
             }
         }
     },
+
+    clearItemUpdate: function() {
+        game.physics.arcade.overlap(player, this.clearItem, this.clearItemHelper, null, this);
+    },
+
+    clearItemHelper: function() {
+        partOne = true;
+        game.state.start('levelMenu');
+    }
 }

@@ -17,6 +17,9 @@ Ice.prototype = {
         //resize the world to tilemap size
         this.floor.resizeWorld();
 
+        BGM = game.add.audio('ice_BGM');
+        BGM.play('', 0, 0.5, true);
+
         mapObjects = new Objects_ice(game, this.map, this.floor);
         console.log(this.floor.z);
         game.world.bringToTop(this.floor);

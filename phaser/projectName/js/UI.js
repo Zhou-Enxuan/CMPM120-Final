@@ -107,7 +107,7 @@ myUI.prototype = {
         }
 
         if(this.lifeValue <= 0.0001) {
-            game.state.start('Play');
+            game.state.start('levelMenu');
         }
         this.lifePercent(this.lifeValue);
         this.energyPercent(this.energyValue);

@@ -12,6 +12,7 @@ function Player(game, x, y , key, frame) {
     this.dash = false;
     //add jump sound effect
     this.jumpSound = game.add.audio('jump');
+    this.dashSound = game.add.audio('dash');
     this.body.setSize(35,53,13,5);
     this.super = false;
     this.superTime = game.time.create(false);
@@ -93,69 +94,6 @@ Player.prototype.constructor = Player;
 
 //make upadte function for player object only
 Player.prototype.update = function() {
-//     // if player is not on dashing, set everything to default
-//     if(!this.dash) {
-//         this.body.velocity.x = 0;
-//         this.body.gravity.y = 2800;
-//         if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-//             this.body.velocity.x = 300;
-//             this.scale.x = 1;
-//             this.animations.play('walk');
-//         } else if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-//             this.body.velocity.x = -300;
-//             this.scale.x = -1;
-//             this.animations.play('walk');
-//         } else {
-//             this.frameName = 'robot_0001';
-//         }
-//     }
-
-//     //check if player is on ground
-
-//     //if it is, set the jump move beck to default, if not , make sure player can only do one more jump or dash
-//     this.isGrounded = this.body.blocked.down || this.body.touching.down;
-
-//     if(this.isGrounded) {
-//         this.jumps = 2;
-//         this.jumping = false;
-//         this.inAir = false
-//     } else {
-//         if(!this.inAir)  {
-//             this.jumps = 1;
-//             this.inAir = true;
-//         }
-//     }
-    
-//     //implement key for jump move, can only jump twice
-//     if(this.jumps > 0 && game.input.keyboard.downDuration(Phaser.Keyboard.UP, 150)) {
-//         this.body.velocity.y = -700
-//         this.jumping = true;
-//         this.inAir = true;
-//         this.jumpSound.play();
-//     } 
-
-//     //implement air dash move, can only dash once after one jump, can't dash if player did doble jump
-//     if(!this.jumping && this.jumps === 1 && game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
-//         this.body.gravity.y = 0;
-//         this.body.velocity.y = 0;
-//         this.body.velocity.x = this.scale.x * 1000;
-//         this.dash = true;
-//         game.time.events.add(Phaser.Timer.SECOND * 0.2, this.stopDash, this);
-//         this.jumping = true;
-//         this.jumps--;
-//     }
-
-//     // finally, letting go of the UP key subtracts a jump
-//     if(this.jumping && game.input.keyboard.upDuration(Phaser.Keyboard.UP)) {
-//         this.jumps--;
-//         this.jumping = false;
-//     }
-
-//     if(UI.energyValue > 0.3 && game.input.keyboard.justPressed(Phaser.Keyboard.Q)) {
-//         UI.energyValue -= 0.3;
-//         UI.temp -= 100;
-//         UI.tempChanged = true;
-//     }
     this.state = this.playerSM.getState();
     //console.log(this.state.name);
 
@@ -169,6 +107,7 @@ Player.prototype.update = function() {
             if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
                 this.playerSM.consumeEvent('walking');
             }else if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)) {
+                this.jumpSound.play('', 0, 0.5, false);
                 this.playerSM.consumeEvent('jumping');
             }else if(game.input.keyboard.justPressed(Phaser.Keyboard.Z)){
                 this.playerSM.consumeEvent('cooling/heating');
@@ -181,6 +120,7 @@ Player.prototype.update = function() {
             this.isGrounded = this.body.blocked.down || this.body.touching.down;
 
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)) {
+                this.jumpSound.play('', 0, 0.5, false);
                 this.playerSM.consumeEvent('jumping');
             } else if(game.input.keyboard.justPressed(Phaser.Keyboard.Z)){
                 this.playerSM.consumeEvent('cooling/heating');
@@ -209,9 +149,11 @@ Player.prototype.update = function() {
                 this.playerSM.consumeEvent('stop');
             } else if(game.input.keyboard.justPressed(Phaser.Keyboard.UP) && !this.secondMove) {
                 this.secondMove = true;
+                this.jumpSound.play('', 0, 0.5, false);
                 this.playerSM.consumeEvent('double jumping');
             } else if(game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) && !this.secondMove) {
                 this.secondMove = true;
+                this.dashSound.play('', 0, 1, false);
                 this.playerSM.consumeEvent('dashing');
             }
 
@@ -240,6 +182,7 @@ Player.prototype.update = function() {
 
             if(game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
                 this.secondMove = true;
+                this.dashSound.play('', 0, 1, false);
                 this.playerSM.consumeEvent('dashing');
                 console.log('hello');
             }

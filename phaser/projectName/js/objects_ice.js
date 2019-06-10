@@ -6,6 +6,8 @@ function Objects_ice(game, myTilemap, floor) {
     myTilemap.createFromObjects('helper', 1, 'assets', 1, true, true, this.helper);
     this.helper.setAll('alpha', 0);
     this.helper.setAll('body.immovable', true);
+    //add hit sound effect
+    this.hitSound = game.add.audio('hit');
     //add ther detector
     this.detector = game.add.group();
     this.detector.enableBody = true;
@@ -85,6 +87,7 @@ function Objects_ice(game, myTilemap, floor) {
     this.snowBalls.setAll('detected', false);
     this.snowBalls.callAll('anchor.setTo', 'anchor', 0.5);
     this.snowBalls.callAll('animations.add', 'animations', 'split', [7,8,9], 10, false);
+    this.snowballSound = game.add.audio('snowball');
     //add thone
     this.thornUp = game.add.group();
     this.thornUp.enableBody = true;
@@ -128,16 +131,22 @@ function Objects_ice(game, myTilemap, floor) {
     this.health.enableBody = true;
     myTilemap.createFromObjects('health', 15, 'objects2', 5, true, true, this.health);
     game.add.tween(this.health).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
+    this.collectSound = game.add.audio('item');
     //add key
     this.switch = game.add.group();
     this.switch.enableBody = true;
-    myTilemap.createFromObjects('key_for_door', 28, 'objects2', 17, true, true, this.switch);
+    myTilemap.createFromObjects('key_for_door', 34, 'objects2', 17, true, true, this.switch);
     this.switch.getChildAt(0).isOn = false;
+    this.switchSound = game.add.audio('switch');
     //add door
     this.door = game.add.group();
     this.door.enableBody = true;
     myTilemap.createFromObjects('door for final', 16, 'objects2', 6, true, true, this.door);
     this.door.setAll('body.immovable', true);
+    this.clearItem = game.add.group();
+    this.clearItem.enableBody = true;
+    myTilemap.createFromObjects('clearItem', 28, 'objects2', 18, true, true, this.clearItem);
+    game.add.tween(this.clearItem).to( {y: 2}, 300, Phaser.Easing.Back.InOut, true, 0, false).yoyo(true);
 }
 
 Objects_ice.prototype = {
@@ -151,6 +160,7 @@ Objects_ice.prototype = {
         this.healthUpdate();
         this.energyUpdate();
         this.switchUpdate();
+        this.clearItemUpdate();
         //console.log(player.x + " and " + player.y);
         game.physics.arcade.collide(player, this.danger);
         game.physics.arcade.collide(player, this.door);
@@ -176,6 +186,7 @@ Objects_ice.prototype = {
 
     iceConeHelper2: function(player, iceCone) {
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             player.super = true;
             if(iceCone.x - player.x < 0) {
@@ -220,7 +231,7 @@ Objects_ice.prototype = {
     dropBlockHelper: function(player, block) {
         if(block.body.touching.up){
             if(!block.isChecked){
-                this.Effect = game.add.tween(block)
+                this.Effect = game.add.tween(block);
                 this.Effect.to( {alpha: 0}, 300, Phaser.Easing.Default, true, 0, false).yoyo(true);
             
                 game.time.events.add(Phaser.Timer.SECOND * 1.5, function() {
@@ -266,6 +277,7 @@ Objects_ice.prototype = {
     snowBallsHelper: function(player, snowball) {
         //console.log('snowBall: ', this.snowBalls.getChildIndex(snowBalls));
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             UI.temp -= 50;
             player.super = true;
@@ -310,6 +322,7 @@ Objects_ice.prototype = {
     }, 
 
     snowBallsHelper3: function(snowball, helper) {
+        this.snowballSound.play('', 0, 0.5, false);
         if(snowball.animations.getAnimation('split').isFinished) {
             snowball.kill();
         }
@@ -329,6 +342,7 @@ Objects_ice.prototype = {
 
     snowBallsHelper5: function(player, snowBall) {
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             UI.temp -= 50;
             player.super = true;
@@ -362,6 +376,7 @@ Objects_ice.prototype = {
     thronHelper: function(player, thorn) {
         //console.log(thorn.z);
         if(!player.super){
+            this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
             player.super = true;
             if(thorn.x - player.x < 0) {
@@ -393,6 +408,7 @@ Objects_ice.prototype = {
 
     },
     energyHelper: function(player, energy) {
+        this.collectSound.play('', 0, 0.5, false);
         UI.energyValue += 0.4;
         energy.kill();
     },
@@ -400,6 +416,7 @@ Objects_ice.prototype = {
         game.physics.arcade.overlap(player, this.health, this.healthHelper, null, this);
     },
     healthHelper: function(player, health) {
+        this.collectSound.play('', 0, 0.5, false);
         UI.lifeValue += 0.4;
         health.kill();
     },
@@ -409,8 +426,17 @@ Objects_ice.prototype = {
     switchHelper: function(player, switchs) {
         //console.log(this.switch.getChildIndex(switchs));
         if(!switchs.isOn) {
+            this.switchSound.play('', 0, 0.5, false);
             switchs.frame = 11;
             this.door.callAll('kill');
         }
+    },
+    clearItemUpdate: function() {
+        game.physics.arcade.overlap(player, this.clearItem, this.clearItemHelper, null, this);
+    },
+
+    clearItemHelper: function() {
+        partTwo = true;
+        game.state.start('levelMenu');
     }
 }
