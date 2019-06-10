@@ -14,6 +14,8 @@ window.onload = function() {
 	game.state.add('mainMenu', MainMenu);
 	game.state.add('credits', Credits);
 	game.state.add('levelMenu', LevelMenu);
+	game.state.add('END', End);
+	game.state.add('tutorial', Tutorial);
 	game.state.add('Play', Play);
 	game.state.add('Ice', Ice);
 	game.state.start('Load');

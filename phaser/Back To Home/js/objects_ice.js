@@ -22,9 +22,7 @@ function Objects_ice(game, myTilemap, floor) {
     this.iceBack = [];
     this.iceCone.forEach(function(ice) {
         this.iceBack.push(ice.y);
-        //console.log(this.iceBack);
     }, this)
-    //console.log(this.iceBack.length);
     game.time.events.loop(Phaser.Timer.SECOND * 4.5, function() {
         for(i = 0; i < this.iceCone.length - 1; i++) {
             if(i % 2 === 0) {
@@ -161,7 +159,6 @@ Objects_ice.prototype = {
         this.energyUpdate();
         this.switchUpdate();
         this.clearItemUpdate();
-        //console.log(player.x + " and " + player.y);
         game.physics.arcade.collide(player, this.danger);
         game.physics.arcade.collide(player, this.door);
     },
@@ -255,7 +252,6 @@ Objects_ice.prototype = {
         game.physics.arcade.overlap(this.snowBalls, this.helper, this.snowBallsHelper3, null, this);
         game.physics.arcade.overlap(this.specialSnowBall, this.helper, this.snowBallsHelper4, null, this);
         this.snowBalls.forEach(function(snowball){
-            //console.log(this.snowBalls.getChildIndex(snowball) + ': ' + snowball.body.velocity.x);
             if(snowball.body.velocity.x < 0) {
                 snowball.scale.x += 0.01;
                 snowball.scale.y += 0.01;
@@ -275,7 +271,6 @@ Objects_ice.prototype = {
     },
 
     snowBallsHelper: function(player, snowball) {
-        //console.log('snowBall: ', this.snowBalls.getChildIndex(snowBalls));
         if(!player.super){
             this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
@@ -303,11 +298,9 @@ Objects_ice.prototype = {
             snowball.body.angularVelocity = 0;
             snowball.animations.play('split');
         }
-        console.log(snowball.animations.getAnimation('split').isPlaying);
     },
 
     snowBallsHelper2: function(player, helper) {
-        //console.log('detector: ', this.detector.getChildIndex(helper));
         if(this.snowBalls.getChildAt(this.detector.getChildIndex(helper)).x > player.x){
             this.snowBalls.getChildAt(this.detector.getChildIndex(helper)).body.velocity.x = -200
             this.snowBalls.getChildAt(this.detector.getChildIndex(helper)).body.angularVelocity = -400;
@@ -337,7 +330,6 @@ Objects_ice.prototype = {
     snowBallsHelper4: function(snowBall, helper) {
         snowBall.body.velocity.x *= -1;
         snowBall.body.angularVelocity *= -1;
-        console.log(snowBall.body.velocity.x);
     },
 
     snowBallsHelper5: function(player, snowBall) {
@@ -374,7 +366,6 @@ Objects_ice.prototype = {
     },
 
     thronHelper: function(player, thorn) {
-        //console.log(thorn.z);
         if(!player.super){
             this.hitSound.play('', 0 , 0.5, false);
             UI.lifeValue -= 0.2;
@@ -424,7 +415,6 @@ Objects_ice.prototype = {
         game.physics.arcade.overlap(player, this.switch,this.switchHelper, null, this);
     },
     switchHelper: function(player, switchs) {
-        //console.log(this.switch.getChildIndex(switchs));
         if(!switchs.isOn) {
             this.switchSound.play('', 0, 0.5, false);
             switchs.frame = 11;

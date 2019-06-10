@@ -5,7 +5,7 @@ Ice.prototype = {
         level_stage = 'ice';
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.physics.arcade.TILE_BIAS = 32;
-        game.add.image(0,0,'Ice-BG');
+        game.add.image(0,320,'Ice-BG');
 
         this.map = game.add.tilemap('Ice-level');
         this.map.addTilesetImage('asset2', 'asset2');
@@ -21,7 +21,6 @@ Ice.prototype = {
         BGM.play('', 0, 0.5, true);
 
         mapObjects = new Objects_ice(game, this.map, this.floor);
-        console.log(this.floor.z);
         game.world.bringToTop(this.floor);
 
 

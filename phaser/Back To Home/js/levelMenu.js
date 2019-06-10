@@ -6,6 +6,9 @@ LevelMenu.prototype = {
             BGM.destroy();
         }
         game.add.sprite(0, 0, 'levelMenu');
+        this.tour = game.add.sprite(570, 100, 'UI', 'tour logo');         
+        this.tour.anchor.setTo(0.5);
+        this.tour.inputEnabled = true;
         this.fire = game.add.sprite(570, 280, 'UI', 'fire logo');
         this.fire.anchor.setTo(0.5);
         this.fire.inputEnabled = true;
@@ -17,14 +20,14 @@ LevelMenu.prototype = {
         this.Effect = game.add.tween(this.spaceShip);
         this.Effect.to( {alpha: 0}, 2000, Phaser.Easing.Default, true, 0, false).yoyo(true);
         this.Effect.pause();
+        this.spaceShip.inputEnabled = true;
 
         this.select = game.add.audio('button');
 
         game.input.mouse.capture = true;
         this.selected = false;
         this.selected2 = false;
-
-        
+        this.selected3 = false;
     },
 
     update: function() {
@@ -40,6 +43,13 @@ LevelMenu.prototype = {
         else {
             this.spaceShip.frameName = 'Spaceship004';
             this.Effect.resume();
+            if(this.spaceShip.input.pointerOver()) {
+                this.Effect.pause();
+                this.spaceShip.alpha = 1;
+                if(game.input.activePointer.leftButton.isDown) {
+                    game.state.start('END');
+                }
+            }
         }
         if(this.fire.input.pointerOver()){
             if(!this.selected) {
@@ -67,6 +77,20 @@ LevelMenu.prototype = {
         } else {
             this.selected2 = false;
             this.ice.tint = 0x999999;;
+        }
+
+        if(this.tour.input.pointerOver()){
+            if(!this.selected3) {
+                this.select.play('', 0, 0.5, false);
+                this.selected3 = true;
+            }
+            this.tour.tint = 0xffffff;
+            if(game.input.activePointer.leftButton.isDown) {
+                game.state.start('tutorial');
+            }
+        } else {
+            this.selected3 = false;
+            this.tour.tint = 0x999999;;
         }
     }
 }

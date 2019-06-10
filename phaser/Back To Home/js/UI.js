@@ -23,7 +23,6 @@ function myUI(game) {
     this.life.anchor.set(1);
     this.lifeValue = 1;
     this.life.fixedToCamera = true;
-    console.log(level_stage);
     if(level_stage == 'ice'){
         this.energyScreen = game.add.sprite(45.5,2.5,'UI','heatEnergyOut');
         this.energy = game.add.sprite(77.5,159,'UI','heatEnergy');
@@ -43,10 +42,15 @@ function myUI(game) {
     this.pointerPos = 400;
     this.tempChanged = false;
     this.heatDamage = game.time.create(false);
+    this.hitSound = game.add.audio('hit');
     this.heatDamage.loop(Phaser.Timer.SECOND * 2,function(){
+        this.hitSound.play('', 0, 0.5, false);
         this.lifeValue -= 0.1;
     },this);
     this.heatDamage.start();
+    this.heatSound = game.add.audio('heat');
+    this.frozenSound = game.add.audio('fronze');
+    this.tempSound = this.heatSound;
 }
 
 //myUI.prototype = Object.create(Phaser.Sprite.prototype);
@@ -57,13 +61,11 @@ myUI.prototype = {
         if(this.pointer.cameraOffset.x > this.pointerPos && this.pointer.cameraOffset.x > 160) {
             var speed = (this.pointer.cameraOffset.x - this.pointerPos)/10;
             this.pointer.cameraOffset.x -= speed;
-            //console.log('UI--: ' + UI.pointer.x);
         }
 
         if(this.pointer.cameraOffset.x < this.pointerPos && this.pointer.cameraOffset.x < 640) {
             var speed = (this.pointerPos - this.pointer.cameraOffset.x)/10;
             this.pointer.cameraOffset.x += speed;
-            //console.log('UI++: ' + UI.pointer.x);
         }
 
         if(this.temp > 240) {
@@ -86,8 +88,17 @@ myUI.prototype = {
         }
 
         if(this.temp >= 240 || this.temp <= -240) {
+            if(this.temp >= 240) {
+                this.tempSound = this.heatSound;
+            } else {
+                this.tempSound = this.frozenSound;
+            }
+            if(!this.tempSound.isPlaying){
+                this.tempSound.play('', 0, 1, true);
+            }
             this.heatDamage.resume();
         } else {
+            this.tempSound.stop();
             this.heatDamage.pause();
         }
 
@@ -107,6 +118,7 @@ myUI.prototype = {
         }
 
         if(this.lifeValue <= 0.0001) {
+            this.tempSound.destroy();
             game.state.start('levelMenu');
         }
         this.lifePercent(this.lifeValue);

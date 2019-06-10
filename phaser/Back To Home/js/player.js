@@ -13,6 +13,7 @@ function Player(game, x, y , key, frame) {
     //add jump sound effect
     this.jumpSound = game.add.audio('jump');
     this.dashSound = game.add.audio('dash');
+    this.chargeSound = game.add.audio('charge');
     this.body.setSize(35,53,13,5);
     this.super = false;
     this.superTime = game.time.create(false);
@@ -184,7 +185,6 @@ Player.prototype.update = function() {
                 this.secondMove = true;
                 this.dashSound.play('', 0, 1, false);
                 this.playerSM.consumeEvent('dashing');
-                console.log('hello');
             }
 
 
@@ -198,8 +198,6 @@ Player.prototype.update = function() {
             } else {
                 this.body.velocity.x = 0;
             }
-            //console.log('this.isGrounded: ' + this.isGrounded);
-
         break;
         case 'double jump':
             this.frameName = 'robot_0001';
@@ -226,7 +224,6 @@ Player.prototype.update = function() {
         break;
         case 'dash':
             this.frameName = 'robot_0001';
-
             this.body.gravity.y = 0;
             this.body.velocity.y = 0;
             this.body.acceleration.x = this.scale.x * 11000;
@@ -237,6 +234,9 @@ Player.prototype.update = function() {
             player.body.velocity.x = 0;
             this.frameName = 'robot_0001';
             if(game.input.keyboard.isDown(Phaser.Keyboard.Z) && UI.energyValue > 0){
+                if(!this.chargeSound.isPlaying){
+                    this.chargeSound.play('', 0, 0.5, true);
+                }
                 UI.energyValue -= 0.004;
                 if(level_stage === 'valcano') {
                     UI.temp -= 1.5;
@@ -245,6 +245,7 @@ Player.prototype.update = function() {
                 }
                 UI.tempChanged = true;
             } else {
+                this.chargeSound.stop();
                 this.playerSM.consumeEvent('stop');
             }
         break;

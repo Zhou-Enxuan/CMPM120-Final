@@ -73,10 +73,8 @@ Play.prototype = {
         //change the temp in the current level
         //63 to first line
         //240 to the highest
-        this.debug = false;
 
         this.moveup =true;
-        //console.log(UI.pointerPos);
         this.tempGrow = game.time.events.loop(Phaser.Timer.SECOND * 0.5, function() {
             UI.temp++;
             UI.tempChanged = true;
@@ -84,24 +82,14 @@ Play.prototype = {
 
         this.zflag = true;
 
-        level_stage = 'valcano';
-
     },
 
     update: function() {
-        //console.log(UI.pointer.x);
         //make the camera move only when player reach the camera dead zone
         if(game.camera.deadzone !== null) {
 			this.zone.x = this.zx + game.camera.x;
 			this.zone.y = this.zy + game.camera.y;
         }
-
-        //key for debug showing
-        if(this.input.keyboard.justPressed(Phaser.Keyboard.T)){
-            this.debug = !this.debug;
-            //console.log(this.debug);
-        }
-        //console.log('TEMP:' + UI.temp);
 
         //check if the hot screen should turn on
 
@@ -119,8 +107,6 @@ Play.prototype = {
             this.zflag = true;
         }
 
-        //console.log(UI.pointerPos);
-
     },
 
 
@@ -134,20 +120,5 @@ Play.prototype = {
             game.world.moveUp(this.floor);
         }
         this.zflag = false;
-    },
-    //showing the debug info
-    render: function() {
-        if(this.debug) {
-            game.debug.cameraInfo(game.camera, 32, 32);
-
-            if(game.camera.deadzone !== null) {
-			    game.debug.geom(this.zone, 'rgba(255,0,0,0.25');
-            }
-            game.debug.body(player);
-            game.debug.physicsGroup(mapObjects.thornDown);
-            game.debug.physicsGroup(mapObjects.thornUp);
-
-        }
-
     }
 };

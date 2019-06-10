@@ -120,8 +120,6 @@ function myObjects(game, myTilemap) {
             this.thornUp.setAll('body.velocity.y', 100);
             this.thronflag = false;
         }
-        //console.log(this.thornDown.getChildAt(0).y);
-        //console.log(this.thornUp.getChildAt(0).y);
 
     },this);
     this.movethron = game.add.group();
@@ -161,13 +159,9 @@ myObjects.prototype = {
         this.clearItemUpdate();
         //player.body.acceleration.x = 0;
         game.physics.arcade.collide(player, this.door);
-        //console.log(player.body.velocity.y);
 
-        // console.log(this.switch.getChildAt(0).isOn);
-        // console.log(this.switch.getChildAt(1).isOn);
         this.fireBallUpdate();
-        //console.log(player.x);
-        //console.log(player.y);
+
     },
     blockUpdate: function() {
         for(var i = 0; i < this.blocks.length; i++) {
@@ -185,7 +179,6 @@ myObjects.prototype = {
         }
     },
     portalHelper: function(player, portal) {
-        //console.log(this.portal.getIndex(portal));
         if(!this.portalFalg2){
             this.portalSound.play('', 0, 0.5, false);
             this.portalFalg2 = true;
@@ -228,13 +221,11 @@ myObjects.prototype = {
                 game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
                     player.body.acceleration.x = 0;
                 },this);
-                console.log(player.body.acceleration.x);
             } else {
                 player.body.acceleration.x = -50000;
                 game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
                     player.body.acceleration.x = 0;
                 },this);
-                console.log(player.body.acceleration.x);
             }
         }
     },
@@ -269,13 +260,11 @@ myObjects.prototype = {
                 game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
                     player.body.acceleration.x = 0;
                 },this);
-                console.log(player.body.acceleration.x);
             } else {
                 player.body.acceleration.x = -50000;
                 game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
                     player.body.acceleration.x = 0;
                 },this);
-                console.log(player.body.acceleration.x);
             }
         }
     },
@@ -309,13 +298,11 @@ myObjects.prototype = {
                 game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
                     player.body.acceleration.x = 0;
                 },this);
-                console.log(player.body.acceleration.x);
             } else {
                 player.body.acceleration.x = -50000;
                 game.time.events.add(Phaser.Timer.SECOND * 0.2, function(){
                     player.body.acceleration.x = 0;
                 },this);
-                console.log(player.body.acceleration.x);
             }
         }
     },
@@ -323,7 +310,6 @@ myObjects.prototype = {
         game.physics.arcade.overlap(player, this.switch,this.switchHelper, null, this);
     },
     switchHelper: function(player, switchs) {
-        //console.log(this.switch.getChildIndex(switchs));
         if(!switchs.isOn) {
             this.switchSound.play('', 0, 0.5, false);
             switchs.frame = 1;

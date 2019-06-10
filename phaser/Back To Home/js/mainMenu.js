@@ -21,7 +21,6 @@ MainMenu.prototype = {
     },
 
     update: function() {
-        console.log(this.selected);
         if(this.start.input.pointerOver()){
             if(!this.selected) {
                 this.select.play('', 0, 0.5, false);
@@ -32,7 +31,6 @@ MainMenu.prototype = {
                 game.state.start('levelMenu');
             }
         } else {
-            console.log('hi');
             this.selected = false;
             this.start.scale.setTo(1);
         }
